@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "OmniWheelBot", group = "Sample")
-public class OmniWheelBot2 extends LinearOpMode
+@TeleOp(name = "OmniWheelBotthree", group = "Sample")
+public class OmniWheelBot3 extends LinearOpMode
 {
     //Declare Motors
     private DcMotor motorfl;
