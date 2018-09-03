@@ -59,12 +59,12 @@ public class PushBotHorizontal extends LinearOpMode
 
 
             if (gamepad1.b) {
-                LeftArmServo.setPosition(.52);
-                RightArmServo.setPosition(.39);
+                LeftArmServo.setPosition(.01);
+                RightArmServo.setPosition(.98);
             }else{
                      if (gamepad1.a) {
-                         LeftArmServo.setPosition(.8);
-                         RightArmServo.setPosition(.17);
+                         LeftArmServo.setPosition(.52);
+                         RightArmServo.setPosition(.39);
                      }
                  }
 

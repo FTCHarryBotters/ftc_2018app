@@ -5,14 +5,13 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@Autonomous(name = "Test Touch", group = "Sample")
-public class TestTouch extends LinearOpMode
+@Autonomous(name = "TestAuto", group = "Sample")
+public class TestColor extends LinearOpMode
 {
     //Declare Motors
     private DcMotor motorleft;
@@ -24,7 +23,7 @@ public class TestTouch extends LinearOpMode
     private Servo LeftArmServo;
 
     //Declare Color sensor
-    public DigitalChannel TouchSensor;
+    public ColorSensor ColorSensor;
 
 
     @Override
@@ -42,9 +41,7 @@ public class TestTouch extends LinearOpMode
         LeftArmServo = hardwareMap.servo.get("LeftArmServo");
         RightArmServo = hardwareMap.servo.get("RightArmServo");
 
-        TouchSensor = hardwareMap.get(DigitalChannel.class, "TouchSensor");
-        TouchSensor.setMode(DigitalChannel.Mode.INPUT);
-
+        ColorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
 
 
 
@@ -55,13 +52,15 @@ public class TestTouch extends LinearOpMode
 
         waitForStart();
 
-        DriveForward(1);
-        if (TouchSensor.getState() == true)
-        {
-            STOP();
-        }else{
-            DriveForward(1);
-        }
+        DriveForward(1, 1000);
+        STOP();
+        Thread.sleep(1000);
+        closeServos();
+        Armup();
+        Thread.sleep(1000);
+        DriveForward(1, 1000);
+        Armdown();
+        openServos();
 
 
 
@@ -69,15 +68,12 @@ public class TestTouch extends LinearOpMode
 
 
 
-
-
-
-
-        }
-    public void DriveForward(double power)
+    }
+    public void DriveForward(double power, long time) throws InterruptedException
     {
         motorleft.setPower(power);
         motorright.setPower(power);
+        Thread.sleep(time);
     }
 
     public void closeServos()
@@ -94,8 +90,8 @@ public class TestTouch extends LinearOpMode
 
     public void Armup() throws InterruptedException
     {
-        motorarm.setPower(.25);
-        Thread.sleep(1000);
+        motorarm.setPower(1);
+        Thread.sleep(500);
     }
 
     public void Armdown() throws InterruptedException
@@ -106,7 +102,7 @@ public class TestTouch extends LinearOpMode
 
     public void STOP() throws InterruptedException
     {
-        DriveForward(0);
+        DriveForward(0,1);
         motorarm.setPower(0);
         Thread.sleep(1000);
     }
