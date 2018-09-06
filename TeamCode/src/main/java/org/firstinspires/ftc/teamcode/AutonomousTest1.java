@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "TestAuto", group = "Sample")
-public class TestColor extends LinearOpMode
+public class AutonomousTest1 extends LinearOpMode
 {
     //Declare Motors
     private DcMotor motorleft;

@@ -24,7 +24,7 @@ public class TestTouch extends LinearOpMode
     private Servo LeftArmServo;
 
     //Declare Color sensor
-    public DigitalChannel TouchSensor;
+    DigitalChannel digitalTouch;
 
 
     @Override
@@ -42,39 +42,37 @@ public class TestTouch extends LinearOpMode
         LeftArmServo = hardwareMap.servo.get("LeftArmServo");
         RightArmServo = hardwareMap.servo.get("RightArmServo");
 
-        TouchSensor = hardwareMap.get(DigitalChannel.class, "TouchSensor");
-        TouchSensor.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "TouchSensor");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
 
 
 
 
-        //set servos to open positionduring initialization
+        //set servos to open position during initialization
         LeftArmServo.setPosition(.52);
         RightArmServo.setPosition(.39);
 
         waitForStart();
 
-        DriveForward(1);
-        if (TouchSensor.getState() == true)
-        {
-            STOP();
-        }else{
+        while (opModeIsActive()){
+
+        if (digitalTouch.getState() == false) {
+
+            telemetry.addData("Digital Touch", "Is Not Pressed");
             DriveForward(1);
+        } else {
+            telemetry.addData("Digital Touch", "Is Pressed");
+            STOP();
         }
 
+        telemetry.update();
 
-
-
-
-
-
-
-
+    }
 
 
         }
-    public void DriveForward(double power)
+    public void DriveForward(double power) throws InterruptedException
     {
         motorleft.setPower(power);
         motorright.setPower(power);
@@ -107,7 +105,7 @@ public class TestTouch extends LinearOpMode
     public void STOP() throws InterruptedException
     {
         DriveForward(0);
-        motorarm.setPower(0);
-        Thread.sleep(1000);
+        motorright.setPower(0);
+        motorleft.setPower(0);
     }
 }
