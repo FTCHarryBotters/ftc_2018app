@@ -13,15 +13,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Autonomous(name = "Autonomous1", group = "Sample")
 public class Autonomous1 extends LinearOpMode
 {
+    //declare motors
     private DcMotor latchLeftM;
     private DcMotor latchRightM;
     private DcMotor driveFLM;
     private DcMotor driveFRM;
     private DcMotor driveBLM;
     private DcMotor driveBRM;
+    //private DcMotor armUpDownM;
+    //private DcMotor collectorM;
 
+    //declare servos
     private Servo latchLeftS;
     private Servo latchRightS;
+    //private Servo samplingS;
+    //private Servo collectorUpDOwnS;
+    //private Servo armExtenderS;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -34,42 +41,45 @@ public class Autonomous1 extends LinearOpMode
         driveFRM = hardwareMap.dcMotor.get("driveFRM");
         driveBLM = hardwareMap.dcMotor.get("driveBLM");
         driveBRM = hardwareMap.dcMotor.get("driveBRM");
+        //armUpDownM = hardwareMap.dcMotor.get("armUpDownM");
+        //collectorM = hardwareMap.dcMotor.get("collectorM");
+
 
         //reversing necessary motors
         latchLeftM.setDirection(DcMotor.Direction.REVERSE);
-        driveFRM.setDirection(DcMotor.Direction.REVERSE);
-        driveBRM.setDirection(DcMotor.Direction.REVERSE);
+        driveFLM.setDirection(DcMotor.Direction.REVERSE);
+        driveBLM.setDirection(DcMotor.Direction.REVERSE);
 
         //declare servos
         latchLeftS = hardwareMap.servo.get("latchLeftS");
         latchRightS = hardwareMap.servo.get("latchRightS");
+        //samplingS = hardwareMap.servo.get("samplingS");
+        //collectorUpDOwnS = hardwareMap.servo.get("collectorUpDOwnS");
+        //armExtenderS = hardwareMap.servo.get("armExtenderS");
 
         waitForStart();
 
-        //change time and power when we figure out the exact quantities
+        //works great!
         Delatch();
 
         //insert EnderCV identification here
 
         //aaaaaaaaaa i hate programming
         //unhook thing from latch
-        driveBRM.setPower(.25);
+        latchMotor(0,1500);
+        spinLeft(.25, 1000);
+        spinLeft(0,100);
         //change values eventually
-        Thread.sleep(500);
+        driveBLM.setPower(0.5);
+        Thread.sleep(1000);
         //change values eventually
-        driveForward(.25, 400);
-        //driveBLM.setPower(.25);
-        //change values eventually
-        //Thread.sleep(500);
-        //change values eventually
-        //driveForward(.25, 500);
-        //change values eventually
-        //spinLeft(.25, 1000);
+        driveForward(.5, 500);
+        spinLeft(.5, 1000);
 
         //insert gold sampling here
 
         //change values eventually
-        //driveForward(.25, 2000);
+        driveForward(.25, 3000);
         //change values eventually
         //spinLeft(.25, 500);
         //change values eventually
@@ -116,6 +126,6 @@ public class Autonomous1 extends LinearOpMode
         latchLeftS.setPosition(0);
         latchRightS.setPosition(1);
         Thread.sleep(500);
-        latchMotor(.25, 4000);
+        latchMotor(.25, 100);
     }
 }
