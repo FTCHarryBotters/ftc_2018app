@@ -67,7 +67,7 @@ public class ExampleBlueVisionDemo extends OpMode {
         List<MatOfPoint> contours = blueVision.getContours();
         for (int i = 0; i < contours.size(); i++) {
             // get the bounding rectangle of a single contour, we use it to get the x/y center
-            // yes there's a mass center using Imgproc.moments but w/e
+            // yes there's a mass center using Imgproc.moments but whatever
             Rect boundingRect = Imgproc.boundingRect(contours.get(i));
             telemetry.addData("contour" + Integer.toString(i),
                     String.format(Locale.getDefault(), "(%d, %d)", (boundingRect.x + boundingRect.width) / 2, (boundingRect.y + boundingRect.height) / 2));

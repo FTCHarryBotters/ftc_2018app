@@ -74,7 +74,7 @@ public class ExampleBlueVision extends OpenCVPipeline {
         //Yellow
         //Core.inRange(hsv, new Scalar(20, 100, 100), new Scalar(30, 255, 255), thresholded);
         //White
-        Core.inRange(hsv, new Scalar(1, 0, 255), new Scalar(360, 10, 200), thresholded);
+        //Core.inRange(hsv, new Scalar(1, 0, 255), new Scalar(360, 10, 200), thresholded);
 
 
         // we blur the thresholded image to remove noise

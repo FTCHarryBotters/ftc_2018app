@@ -10,18 +10,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TeleOp1 extends LinearOpMode
 {
     //declare motors
-    private DcMotor latchLeftM;
-    private DcMotor latchRightM;
+    //private DcMotor latchLeftM;
+    //private DcMotor latchRightM;
     private DcMotor driveFLM;
     private DcMotor driveFRM;
     private DcMotor driveBLM;
     private DcMotor driveBRM;
     //private DcMotor armUpDownM;
-    private DcMotor collectorM;
+    //private DcMotor collectorM;
 
     //declare servos
-    private Servo latchLeftS;
-    private Servo latchRightS;
+    //private Servo latchLeftS;
+    //private Servo latchRightS;
     //private Servo samplingS;
     //private Servo collectorUpDOwnS;
     //private Servo armExtenderS;
@@ -32,30 +32,30 @@ public class TeleOp1 extends LinearOpMode
     {
 
         //declare motors
-        latchLeftM = hardwareMap.dcMotor.get("latchLeftM");
-        latchRightM = hardwareMap.dcMotor.get("latchRightM");
+        //latchLeftM = hardwareMap.dcMotor.get("latchLeftM");
+        //latchRightM = hardwareMap.dcMotor.get("latchRightM");
         driveFLM = hardwareMap.dcMotor.get("driveFLM");
         driveFRM = hardwareMap.dcMotor.get("driveFRM");
         driveBLM = hardwareMap.dcMotor.get("driveBLM");
         driveBRM = hardwareMap.dcMotor.get("driveBRM");
         //armUpDownM = hardwareMap.dcMotor.get("armUpDownM");
-        collectorM = hardwareMap.dcMotor.get("collectorM");
+        //collectorM = hardwareMap.dcMotor.get("collectorM");
 
 
         //reversing necessary motors
-        latchLeftM.setDirection(DcMotor.Direction.REVERSE);
-        driveFRM.setDirection(DcMotor.Direction.REVERSE);
-        driveBRM.setDirection(DcMotor.Direction.REVERSE);
+        //latchLeftM.setDirection(DcMotor.Direction.REVERSE);
+        driveFLM.setDirection(DcMotor.Direction.REVERSE);
+        driveBLM.setDirection(DcMotor.Direction.REVERSE);
 
         //declare servos
-        latchLeftS = hardwareMap.servo.get("latchLeftS");
-        latchRightS = hardwareMap.servo.get("latchRightS");
+        //latchLeftS = hardwareMap.servo.get("latchLeftS");
+        //latchRightS = hardwareMap.servo.get("latchRightS");
         //samplingS = hardwareMap.servo.get("samplingS");
         //collectorUpDOwnS = hardwareMap.servo.get("collectorUpDOwnS");
         //armExtenderS = hardwareMap.servo.get("armExtenderS");
 
-        latchLeftS.setPosition(0);
-        latchRightS.setPosition(1);
+        //latchLeftS.setPosition(0);
+        //latchRightS.setPosition(1);
 
         //declare drivespeed variable. this is to change the speed that the robot moves
         double drivespeed;
@@ -97,10 +97,10 @@ public class TeleOp1 extends LinearOpMode
             driveBLM.setPower(-gamepad1.left_stick_y/drivespeed);
             driveBRM.setPower(-gamepad1.right_stick_y/drivespeed);
 
-            latchLeftM.setPower(-gamepad2.left_stick_y/latchspeed);
-            latchRightM.setPower(-gamepad2.left_stick_y/latchspeed);
+            //latchLeftM.setPower(-gamepad2.left_stick_y/latchspeed);
+            //latchRightM.setPower(-gamepad2.left_stick_y/latchspeed);
 
-            if (gamepad2.b) {
+            /*if (gamepad2.b) {
                 latchLeftS.setPosition(0);
                 latchRightS.setPosition(1);
             }else{
@@ -108,9 +108,9 @@ public class TeleOp1 extends LinearOpMode
                     latchLeftS.setPosition(1);
                     latchRightS.setPosition(0);
                 }
-            }
+            }*/
 
-            if(gamepad2.dpad_down){
+            /*if(gamepad2.dpad_down){
                 collectorM.setPower(-1);
             }else{
                 if(gamepad2.dpad_up){
@@ -120,7 +120,7 @@ public class TeleOp1 extends LinearOpMode
                         collectorM.setPower(0);
                     }
                 }
-            }
+            }*/
 
 
 
