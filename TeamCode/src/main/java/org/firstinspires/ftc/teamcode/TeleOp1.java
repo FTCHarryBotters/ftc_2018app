@@ -74,10 +74,10 @@ public class TeleOp1 extends LinearOpMode
 
 
             //lets the user change the latchspeed variable
-            if (gamepad2.x){
-                latchspeed = 1.33;
+            if (gamepad2.dpad_up){
+                latchspeed = 1;
             }else{
-                if (gamepad2.y){
+                if (gamepad2.dpad_down){
                     latchspeed = 4;
                 }
             }
@@ -106,6 +106,9 @@ public class TeleOp1 extends LinearOpMode
                     if(gamepad1.left_bumper)
                     {
                         armUpDownM.setPower(-0.5);
+                    }else{
+                        armUpDownM.setPower(0);
+
                     }
                  }
 
@@ -130,11 +133,11 @@ public class TeleOp1 extends LinearOpMode
 
             if(gamepad2.a)
             {
-                collectorS.setDirection(Servo.Direction.REVERSE);
+                collectorS.setPosition(0);
             }else{
                   if(gamepad2.y)
                   {
-                    collectorS.setDirection(Servo.Direction.FORWARD);
+                    collectorS.setPosition(1);
                   }else{
                         if(gamepad2.b)
                         {
