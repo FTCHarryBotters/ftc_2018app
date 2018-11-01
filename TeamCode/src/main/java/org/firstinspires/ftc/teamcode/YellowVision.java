@@ -44,7 +44,7 @@ import java.util.List;
  * robotics OpenCV applications.
  */
 
-public class ExampleBlueVision extends OpenCVPipeline {
+public class YellowVision extends OpenCVPipeline {
     private boolean showContours = true;
     // To keep it such that we don't have to instantiate a new Mat every call to processFrame,
     // we declare the Mats up here and reuse them. This is easier on the garbage collector.
@@ -72,14 +72,16 @@ public class ExampleBlueVision extends OpenCVPipeline {
         //Blue
        // Core.inRange(hsv, new Scalar(90, 128, 30), new Scalar(170, 255, 255), thresholded);
         //Yellow
-        //Core.inRange(hsv, new Scalar(20, 100, 100), new Scalar(30, 255, 255), thresholded);
+        Core.inRange(hsv, new Scalar(20, 100, 100), new Scalar(30, 255, 255), thresholded);
         //White
         //Core.inRange(hsv, new Scalar(1, 0, 255), new Scalar(360, 10, 200), thresholded);
+        //Imgproc.distanceTransform(rgba,gray, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE);
 
 
         // we blur the thresholded image to remove noise
         // there are other types of blur like box blur or gaussian which can be explored.
         Imgproc.blur(thresholded, thresholded, new Size(3, 3));
+
 
         // create a list to hold our contours.
         // Conceptually, there is going to be a single contour for the outline of every blue object

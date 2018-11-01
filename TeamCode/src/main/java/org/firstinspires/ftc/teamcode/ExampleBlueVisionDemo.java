@@ -47,21 +47,30 @@ import java.util.Locale;
  */
 @TeleOp(name="Example: Blue Vision Demo")
 public class ExampleBlueVisionDemo extends OpMode {
-    private ExampleBlueVision blueVision;
+    private YellowVision blueVision;
+    int showContours = 0;
     @Override
     public void init() {
-        blueVision = new ExampleBlueVision();
+        blueVision = new YellowVision();
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         blueVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         blueVision.setShowCountours(false);
         // start the vision system
         blueVision.enable();
+
     }
 
     @Override
     public void loop() {
         // update the settings of the vision pipeline
-        blueVision.setShowCountours(gamepad1.x);
+        if (gamepad1.x)
+        {
+            showContours = 1;
+        }
+        if (showContours == 1)
+        {
+            blueVision.setShowCountours(true);
+        }
 
         // get a list of contours from the vision system
         List<MatOfPoint> contours = blueVision.getContours();

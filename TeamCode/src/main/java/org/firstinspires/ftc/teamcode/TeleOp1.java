@@ -22,7 +22,7 @@ public class TeleOp1 extends LinearOpMode
     //declare servos
     //private Servo latchLeftS;
     //private Servo latchRightS;
-    //private Servo samplingS;
+    private Servo samplingS;
     //private Servo collectorUpDOwnS;
     //private Servo armExtenderS;
 
@@ -50,7 +50,7 @@ public class TeleOp1 extends LinearOpMode
         //declare servos
         //latchLeftS = hardwareMap.servo.get("latchLeftS");
         //latchRightS = hardwareMap.servo.get("latchRightS");
-        //samplingS = hardwareMap.servo.get("samplingS");
+        samplingS = hardwareMap.servo.get("samplingS");
         //collectorUpDOwnS = hardwareMap.servo.get("collectorUpDOwnS");
         //armExtenderS = hardwareMap.servo.get("armExtenderS");
 
@@ -62,8 +62,8 @@ public class TeleOp1 extends LinearOpMode
         drivespeed = 2;
 
         //declare latchspeed variable. this is to change the speed that the latch arm moves
-        double latchspeed;
-        latchspeed = 4;
+        //double latchspeed;
+        //latchspeed = 4;
 
         waitForStart();
 
@@ -72,13 +72,13 @@ public class TeleOp1 extends LinearOpMode
 
 
             //lets the user change the latchspeed variable
-            if (gamepad2.x){
+            /*if (gamepad2.x){
                 latchspeed = 1.33;
             }else{
                 if (gamepad2.y){
                     latchspeed = 4;
                 }
-            }
+            }*/
 
 
             //lets the user change the speed of the robot
@@ -108,7 +108,7 @@ public class TeleOp1 extends LinearOpMode
                     latchLeftS.setPosition(1);
                     latchRightS.setPosition(0);
                 }
-            }*/
+            }
 
             /*if(gamepad2.dpad_down){
                 collectorM.setPower(-1);
