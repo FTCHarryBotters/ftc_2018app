@@ -17,7 +17,7 @@ public class TeleOp1 extends LinearOpMode
     private DcMotor driveBLM;
     private DcMotor driveBRM;
     private DcMotor armUpDownM;
-    //private DcMotor armExtenderM;
+    private DcMotor armExtenderM;
 
 
     //declare servos
@@ -32,7 +32,7 @@ public class TeleOp1 extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
 
-        //declare motors
+        //set motors to the configuration
         latchLeftM = hardwareMap.dcMotor.get("latchLeftM");
         latchRightM = hardwareMap.dcMotor.get("latchRightM");
         driveFLM = hardwareMap.dcMotor.get("driveFLM");
@@ -40,7 +40,7 @@ public class TeleOp1 extends LinearOpMode
         driveBLM = hardwareMap.dcMotor.get("driveBLM");
         driveBRM = hardwareMap.dcMotor.get("driveBRM");
         armUpDownM = hardwareMap.dcMotor.get("armUpDownM");
-        //armExtenderM = hardwareMap.dcMotor.get("armExtenderM");
+        armExtenderM = hardwareMap.dcMotor.get("armExtenderM");
 
 
 
@@ -49,7 +49,7 @@ public class TeleOp1 extends LinearOpMode
         driveFLM.setDirection(DcMotor.Direction.REVERSE);
         driveBLM.setDirection(DcMotor.Direction.REVERSE);
 
-        //declare servos
+        //set servos to the configuration
         latchLeftS = hardwareMap.servo.get("latchLeftS");
         latchRightS = hardwareMap.servo.get("latchRightS");
         collectorS = hardwareMap.servo.get("collectorS");
@@ -73,7 +73,7 @@ public class TeleOp1 extends LinearOpMode
         {
 
 
-            //lets the user change the latchspeed variable
+            //lets Michael change the latchspeed variable
             if (gamepad2.dpad_up){
                 latchspeed = 1;
             }else{
@@ -83,7 +83,7 @@ public class TeleOp1 extends LinearOpMode
             }
 
 
-            //lets the user change the speed of the robot
+            //lets KV change the speed of the robot
             if (gamepad1.x){
                 drivespeed = 1;
             }else{
@@ -93,12 +93,13 @@ public class TeleOp1 extends LinearOpMode
             }
 
 
-            //drive the robot
+            //lets KV drive the robot
             driveFLM.setPower(-gamepad1.left_stick_y/drivespeed);
             driveFRM.setPower(-gamepad1.right_stick_y/drivespeed);
             driveBLM.setPower(-gamepad1.left_stick_y/drivespeed);
             driveBRM.setPower(-gamepad1.right_stick_y/drivespeed);
 
+            //lets KV move the arm up and down
             if(gamepad1.right_bumper)
             {
                 armUpDownM.setPower(0.5);
@@ -113,11 +114,11 @@ public class TeleOp1 extends LinearOpMode
                  }
 
 
-            //move the latch thing
+            //Michael move the latch thing
             latchLeftM.setPower(-gamepad2.left_stick_y/latchspeed);
             latchRightM.setPower(-gamepad2.left_stick_y/latchspeed);
 
-
+            //Michael moves the Latch servos
             if (gamepad2.left_trigger > .1)
             {
                 latchLeftS.setPosition(0);
@@ -130,7 +131,10 @@ public class TeleOp1 extends LinearOpMode
                     }
                  }
 
-
+            //moves the servo that makes the flaps move
+            //set position 0 makes the flaps take in
+            //set position 1 make flaps eject blocks
+            //set position 0.50 makes flaps stop moving
             if(gamepad2.a)
             {
                 collectorS.setPosition(0);
@@ -146,9 +150,26 @@ public class TeleOp1 extends LinearOpMode
                     }
                 }
 
-
+            /*if Michael moves the right stick down,
+            it moves the controller down by setposition to 0
+            if he moves it up, it moves up by setting position to 1
+            if he doesn't move it, it ouputs 0.50 and doesn't move.*/
             collectorUpDOwnS.setPosition(gamepad2.right_stick_y/2 +0.5);
 
+            
+            //lets Kv move the arm In and OUt.
+            //power 1 is in, power -1 is out
+            if (gamepad1.left_trigger > .1)
+            {
+                armExtenderM.setPower(1);
+            }else{
+                if (gamepad1.right_trigger > .1)
+                {
+                    armExtenderM.setPower(-1);
+                }else{
+                    armExtenderM.setPower(0);
+                }
+            }
 
             idle();
         }
