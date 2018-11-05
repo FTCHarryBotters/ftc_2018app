@@ -17,6 +17,7 @@ public class Autonomous1 extends LinearOpMode
 {
     private YellowVision yellowVision;
     private TeleOp2 TeleOp2;
+    int i = 0;
 
     //declare motors
 
@@ -97,7 +98,11 @@ public class Autonomous1 extends LinearOpMode
             spinRight(0.50, 1000);
             moveLeft(0.50, 100);
             samplingS.setPosition(1);
-            //EnderCV contour test
+            EnderCVContoursTest();
+            if(i >= 1)
+            {
+                moveRight(0.50, 500);
+            }
             samplingS.setPosition(0);
             driveForward(0.50, 1000);
 
@@ -148,5 +153,16 @@ public class Autonomous1 extends LinearOpMode
     {
         TeleOp2.MoveRight(power);
         Thread.sleep(time);
+    }
+    public void EnderCVContoursTest()
+    {
+        List<MatOfPoint> contours = yellowVision.getContours();
+        i = 0;
+        while (i < contours.size())
+        {
+            i++;
+        }
+        telemetry.addData("number of Countours i:", i);
+        telemetry.update();
     }
 }
