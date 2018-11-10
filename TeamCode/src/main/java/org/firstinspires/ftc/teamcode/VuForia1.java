@@ -16,12 +16,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
  * This OpMode was written for the VuforiaDemo Basics video. This demonstrates basic principles of
  * using VuforiaDemo in FTC.
  */
 @Autonomous(name = "Vuforia")
+@Disabled
 public class VuForia1 extends LinearOpMode
 {
     // Variables to be used for later

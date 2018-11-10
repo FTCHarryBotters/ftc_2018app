@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.opencv.core.MatOfPoint;
@@ -46,6 +47,7 @@ import java.util.Locale;
  * Additionally, the centers of the bounding rectangles of the contours are sent to telemetry.
  */
 @TeleOp(name="Example: Blue Vision Demo")
+@Disabled
 public class ExampleBlueVisionDemo extends OpMode {
     private YellowVision blueVision;
     int showContours = 0;

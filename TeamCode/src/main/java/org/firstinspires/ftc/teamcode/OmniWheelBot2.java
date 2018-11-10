@@ -4,8 +4,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "OmniWheelBot2", group = "Sample")
+@Disabled
 public class OmniWheelBot2 extends LinearOpMode
 {
     //Declare Motors

@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "PushBotTwoControllers", group = "Sample")
+@Disabled
 public class PushBotTwoController extends LinearOpMode
 {
     //Declare Motors

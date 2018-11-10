@@ -20,7 +20,7 @@ public class TeleOp2 extends LinearOpMode
     private static double HALFDRIVESPEED = 0.5;
 
     //declare servos
-    private Servo markerS;
+    //private Servo markerS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,13 +38,13 @@ public class TeleOp2 extends LinearOpMode
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
 
         //set servos to the configuration
-        markerS = hardwareMap.servo.get("markerS");
+        //markerS = hardwareMap.servo.get("markerS");
 
         //declare drivespeed variable. this is to change the speed that the robot moves
         double drivespeed;
         drivespeed = HALFDRIVESPEED;
 
-        markerS.setPosition(0.25);
+        //markerS.setPosition(0.25);
 
         waitForStart();
 
@@ -59,10 +59,10 @@ public class TeleOp2 extends LinearOpMode
                 }
             }
 
-            if(gamepad1.x)
+            /*if(gamepad1.x)
             {
                 markerS.setPosition(0.50);
-            }
+            }*/
 
             driveFLM.setPower(-gamepad1.left_stick_y*drivespeed);
             driveFRM.setPower(-gamepad1.right_stick_y*drivespeed);
@@ -124,5 +124,4 @@ public class TeleOp2 extends LinearOpMode
         //while the front left and back right motors move forward
         MoveLeft(-power);
     }
-
 }
