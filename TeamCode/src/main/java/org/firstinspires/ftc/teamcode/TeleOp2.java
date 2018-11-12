@@ -69,28 +69,29 @@ public class TeleOp2 extends LinearOpMode
             driveBLM.setPower(-gamepad1.left_stick_y*drivespeed);
             driveBRM.setPower(-gamepad1.right_stick_y*drivespeed);
 
-            MoveLeft(gamepad1.left_trigger*drivespeed);
-            MoveRight(gamepad1.right_trigger*drivespeed);
+            moveLeft(gamepad1.left_trigger*drivespeed);
+            moveRight(gamepad1.right_trigger*drivespeed);
 
             idle();
         }
     }
-    public void DriveForward(double power)
+    public void driveForward(double power)
     {
         //this function is to move forward.
         //all motors move forward
+        telemetry.addData("f", HALFDRIVESPEED);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
         driveBRM.setPower(power);
     }
-    public void DriveBackward(double power)
+    public void driveBackward(double power)
     {
         //this function is to move backward
         //all motors move back
-        DriveForward(-power);
+        driveForward(-power);
     }
-    public void SpinLeft(double power)
+    public void spinLeft(double power)
     {
         //spins the robot left
         //the left side moves backward &
@@ -100,14 +101,14 @@ public class TeleOp2 extends LinearOpMode
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
     }
-    public void SpinRight(double power)
+    public void spinRight(double power)
     {
         //spins the robot right
         //the right side moves backward &
         //the left side motors move forward
-        SpinLeft(-power);
+        spinLeft(-power);
     }
-    public void MoveLeft(double power)
+    public void moveLeft(double power)
     {
         //slides the robot left
         //the front left and back right motors move backward
@@ -117,11 +118,25 @@ public class TeleOp2 extends LinearOpMode
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
     }
-    public void MoveRight(double power)
+    public void moveRight(double power)
     {
         //slides the robot right
         //the front right and back left motors move backward
         //while the front left and back right motors move forward
-        MoveLeft(-power);
+        moveLeft(-power);
+    }
+    public void stopMoving()
+    {
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+    }
+    public void initializeMotors(DcMotor driveFLM, DcMotor driveFRM, DcMotor driveBLM, DcMotor driveBRM)
+    {
+        this.driveFLM = driveFLM;
+        this.driveFRM = driveFRM;
+        this.driveBLM = driveBLM;
+        this.driveBRM = driveBRM;
     }
 }

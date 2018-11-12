@@ -16,32 +16,25 @@ import java.util.List;
 
 @Autonomous(name = "Autonomous1", group = "Sample")
 public class Autonomous1 extends LinearOpMode {
-    private YellowVision yellowVision;
-    //private TeleOp2 teleOp2;
+
+    private YellowVision yellowVision = new YellowVision();
     int i = 0;
     int j = 0;
-
+    public static double power = .2;
     boolean isGold = false;
 
     //declare motors
-
     private DcMotor driveFLM;
     private DcMotor driveFRM;
     private DcMotor driveBLM;
     private DcMotor driveBRM;
     //private DcMotor latchLeftM;
     //private DcMotor latchRightM;
-    /*private DcMotor armUpDownM;
-    private DcMotor collectorM;
-    */
 
     //declare servos
     //private Servo latchLeftS;
     //private Servo latchRightS;
     private Servo samplingS;
-    /*private Servo collectorUpDOwnS;
-    private Servo armExtenderS;
-    */
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -54,12 +47,7 @@ public class Autonomous1 extends LinearOpMode {
         driveBRM = hardwareMap.dcMotor.get("driveBRM");
         //latchLeftM = hardwareMap.dcMotor.get("latchLeftM");
         //latchRightM = hardwareMap.dcMotor.get("latchRightM");
-        //armUpDownM = hardwareMap.dcMotor.get("armUpDownM");
-        //collectorM = hardwareMap.dcMotor.get("collectorM");
 
-        //teleOp2 = new TeleOp2();
-        //teleOp2.initialize();
-        yellowVision = new YellowVision();
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
@@ -80,31 +68,88 @@ public class Autonomous1 extends LinearOpMode {
         //latchLeftS = hardwareMap.servo.get("latchLeftS");
         //latchRightS = hardwareMap.servo.get("latchRightS");
         samplingS = hardwareMap.servo.get("samplingS");
-        //collectorUpDOwnS = hardwareMap.servo.get("collectorUpDOwnS");
-        //armExtenderS = hardwareMap.servo.get("armExtenderS");
 
         // start the vision system
         yellowVision.enable();
 
         waitForStart();
 
-        //works great!
-        //Delatch();
+            //works great!
+            //Delatch();
 
+            moveRight(0.20);
+            //driveForward(0.20, 600);
+            //spinRight(0.20, 1120);
+            //moveLeft(0.20, 100000);
 
+            //SamplingSection();
 
-            /*moveRight(0.50, 560);
-            driveForward(0.50, 1120);
-            spinRight(0.50, 2240);
-            moveLeft(0.50, 224);*/
-        SamplingSection();
-
-
-        yellowVision.disable();
-
+            yellowVision.disable();
+    }
+    //theses methods move the robots without using encoders.
+    // they were made because calling methods from teleop2 did not work and
+    // i could just ctrl C V the entire thing rather  than changing minor parts here and there
+    //you probably shouldn't use them, just use the ones that use encoders
+    public void driveForward(double power)
+    {
+        //this function is to move forward.
+        //all motors move forward
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+    }
+    public void driveBackward(double power)
+    {
+        //this function is to move backward
+        //all motors move back
+        driveForward(-power);
+    }
+    public void spinLeft(double power)
+    {
+        //spins the robot left
+        //the left side moves backward &
+        //the right side motors move forward
+        driveFLM.setPower(-power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(-power);
+        driveBRM.setPower(power);
+    }
+    public void spinRight(double power)
+    {
+        //spins the robot right
+        //the right side moves backward &
+        //the left side motors move forward
+        spinLeft(-power);
+    }
+    public void moveLeft(double power)
+    {
+        //slides the robot left
+        //the front left and back right motors move backward
+        //while the front right and back left motors move forward
+        driveFLM.setPower(-power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(-power);
+    }
+    public void moveRight(double power)
+    {
+        //slides the robot right
+        //the front right and back left motors move backward
+        //while the front left and back right motors move forward
+        moveLeft(-power);
+    }
+    public void stopMoving()
+    {
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
     }
 
-    //the following methods deal with moving the robot around
+
+
+    //the following methods deal with moving the robot around with encoders.
     public void driveForward(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -125,23 +170,15 @@ public class Autonomous1 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //teleOp2.DriveForward(power);
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
+        driveForward(power);
 
         //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        while (driveFLM.isBusy() && driveFRM.isBusy() /*&& driveBLM.isBusy() && driveBRM.isBusy()*/)
         {
 
         }
 
-        //teleOp2.DriveForward(0);
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
+        stopMoving();
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -151,7 +188,7 @@ public class Autonomous1 extends LinearOpMode {
 
     public void driveBackward(double power, int ticks) throws InterruptedException
     {
-        driveForward(-power, ticks);
+        driveForward(power, -ticks);
     }
 
     public void spinLeft(double power, int ticks)
@@ -174,23 +211,19 @@ public class Autonomous1 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //teleOp2.SpinLeft(power);
+        //spinLeft(power);
         driveFLM.setPower(-power);
         driveFRM.setPower(power);
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
 
         //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() /*&& driveBRM.isBusy()*/)
         {
 
         }
 
-        //teleOp2.SpinLeft(0);
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
+        stopMoving();
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -200,7 +233,7 @@ public class Autonomous1 extends LinearOpMode {
 
     public void spinRight(double power, int ticks) throws InterruptedException
     {
-        spinLeft(-power, ticks);
+        spinLeft(power, -ticks);
     }
 
     public void moveLeft(double power, int ticks) throws InterruptedException
@@ -223,23 +256,19 @@ public class Autonomous1 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //teleOp2.MoveLeft(power);
+        //moveLeft(power);
         driveFLM.setPower(-power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
 
         //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() /*&& driveBRM.isBusy()*/)
         {
 
         }
 
-        //teleOp2.MoveLeft(0);
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
+        stopMoving();
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -249,7 +278,7 @@ public class Autonomous1 extends LinearOpMode {
 
     public void moveRight(double power, int ticks) throws InterruptedException
     {
-        moveLeft(-power, ticks);
+        moveLeft(power, -ticks);
     }
 
 
@@ -288,17 +317,15 @@ public class Autonomous1 extends LinearOpMode {
 
     public void detectingAndSamplingGold(int ticks) throws InterruptedException
     {
-        samplingS.setPosition(1);
+        samplingS.setPosition(0);
         EnderCVContoursTest();
-        telemetry.addData("isGold1", isGold);
         if (i != 0)
         {
             isGold = true;
-            telemetry.addData("isGold2", isGold);
-            driveBackward(0.025, 2000);
+            samplingS.setPosition(.65);
+            driveBackward(power, 400);
             samplingS.setPosition(0);
-            driveForward(0.025, 2000);
-            driveForward(-0.025, ticks);
+            driveBackward(power, ticks-400);
         }
     }
 
@@ -307,23 +334,23 @@ public class Autonomous1 extends LinearOpMode {
         while (!isGold && j < 2)
         {
             j++;
-            detectingAndSamplingGold(6000);
+            detectingAndSamplingGold(1400);
 
             if (!isGold)
             {
                 samplingS.setPosition(0);
-                driveForward(0.025, 3000);
-                detectingAndSamplingGold(9000);
+                driveForward(power, 600);
+                detectingAndSamplingGold(2000);
 
                 if (!isGold)
                 {
                     samplingS.setPosition(0);
-                    driveForward(-0.025, 6000);
-                    detectingAndSamplingGold(3000);
+                    driveBackward(power, 1300);
+                    detectingAndSamplingGold(800);
 
                     if (!isGold)
                     {
-                        driveForward(-0.025, 3000);
+                        driveForward(power, 600);
                     }
                 }
             }
