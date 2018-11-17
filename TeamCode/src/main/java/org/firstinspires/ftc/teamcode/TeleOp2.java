@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOp2", group = "Sample")
@@ -14,37 +14,68 @@ public class TeleOp2 extends LinearOpMode
     private DcMotor driveFRM;
     private DcMotor driveBLM;
     private DcMotor driveBRM;
+    private DcMotor latchLeftM;
+    private DcMotor latchRightM;
+    private DcMotor linearForwardM;
+    private DcMotor linearUpDownM;
 
-    //Declare drive speed statics
-    private static double FULLDRIVESPEED = 1;
-    private static double HALFDRIVESPEED = 0.5;
+    //Declare drive and latch speed statics
+    private static double DRIVESPEEDFULL = 1;
+    private static double DRIVESPEED3BY4 = 0.5;
+    private static double LATCHSPEEDFULL = 1;
+    private static double LATCHSPEEDQRTR = 0.25;
 
     //declare servos
-    //private Servo markerS;
+    private Servo latchLeftS;
+    private Servo latchRightS;
+    private Servo samplingS;
+    private Servo markerS;
+    private Servo collectorS;
+    private Servo collectorUpDownS;
+    private Servo mineralDropperS;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //set motors to the configuration
-        driveFLM = hardwareMap.dcMotor.get("driveFLM");
-        driveFRM = hardwareMap.dcMotor.get("driveFRM");
-        driveBLM = hardwareMap.dcMotor.get("driveBLM");
-        driveBRM = hardwareMap.dcMotor.get("driveBRM");
+        //set motors to th configuration
+        driveFLM       = hardwareMap.dcMotor.get("driveFLM");
+        driveFRM       = hardwareMap.dcMotor.get("driveFRM");
+        driveBLM       = hardwareMap.dcMotor.get("driveBLM");
+        driveBRM       = hardwareMap.dcMotor.get("driveBRM");
+        latchLeftM     = hardwareMap.dcMotor.get("latchLeftM");
+        latchRightM    = hardwareMap.dcMotor.get("latchRightM");
+        linearForwardM = hardwareMap.dcMotor.get("linearForwardM");
+        linearUpDownM  = hardwareMap.dcMotor.get("linearUpDownM");
 
         //reversing necessary motors
         driveFLM.setDirection(DcMotor.Direction.FORWARD);
         driveFRM.setDirection(DcMotor.Direction.REVERSE);
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
+        latchLeftM.setDirection(DcMotor.Direction.FORWARD);
+        latchRightM.setDirection(DcMotor.Direction.REVERSE);
+        linearForwardM.setDirection(DcMotor.Direction.REVERSE);
+        linearUpDownM.setDirection(DcMotor.Direction.REVERSE);
 
-        //set servos to the configuration
-        //markerS = hardwareMap.servo.get("markerS");
+        //set servos to th configuration
+        latchLeftS       = hardwareMap.servo.get("latchLeftS");
+        latchRightS      = hardwareMap.servo.get("latchRightS");
+        samplingS        = hardwareMap.servo.get("samplingS");
+        markerS          = hardwareMap.servo.get("markerS");
+        collectorS       = hardwareMap.servo.get("collectorS");
+        collectorUpDownS = hardwareMap.servo.get("collectorUpDownS");
+        mineralDropperS  = hardwareMap.servo.get("mineralDropperS");
 
-        //declare drivespeed variable. this is to change the speed that the robot moves
-        double drivespeed;
-        drivespeed = HALFDRIVESPEED;
+        //declare drivespeed variable. this is to change th speed that th robot moves
+        double drivespeed = DRIVESPEED3BY4;
 
-        //markerS.setPosition(0.25);
+        //declare latchspeed variable. this is to change th speed of th latch arm
+        double latchspeed = LATCHSPEEDQRTR;
+
+        //declare gamepad2mode variable.
+        // michael can use this variable
+        //and the start button to change wat he controls
+        int gamepad2mode = 1;
 
         waitForStart();
 
@@ -52,25 +83,97 @@ public class TeleOp2 extends LinearOpMode
         {
             //lets KV change the speed of the robot
             if (gamepad1.x){
-                drivespeed = FULLDRIVESPEED;
+                drivespeed = DRIVESPEEDFULL;
             }else{
                 if (gamepad1.y){
-                    drivespeed = HALFDRIVESPEED;
+                    drivespeed = DRIVESPEED3BY4;
                 }
             }
 
-            /*if(gamepad1.x)
+            //lets Mike change the speed of the Latch arm
+            if (gamepad2.dpad_up){
+                latchspeed = LATCHSPEEDFULL;
+            }else{
+                if (gamepad2.dpad_down){
+                    latchspeed = LATCHSPEEDQRTR;
+                }
+            }
+
+            driveFLM.setPower(-gamepad1.left_stick_y);
+            driveFRM.setPower(-gamepad1.right_stick_y);
+            driveBLM.setPower(-gamepad1.left_stick_y);
+            driveBRM.setPower(-gamepad1.right_stick_y);
+            moveLeft(gamepad1.left_trigger);
+            moveRight(gamepad1.right_trigger);
+
+            if (gamepad1.a)
             {
-                markerS.setPosition(0.50);
-            }*/
+                mineralDropping();
+            }
 
-            driveFLM.setPower(-gamepad1.left_stick_y*drivespeed);
-            driveFRM.setPower(-gamepad1.right_stick_y*drivespeed);
-            driveBLM.setPower(-gamepad1.left_stick_y*drivespeed);
-            driveBRM.setPower(-gamepad1.right_stick_y*drivespeed);
+            if (gamepad1.right_bumper) {
+                linearForwardM.setPower(0.5);
+            }else{
+                if (gamepad1.left_bumper) {
+                    linearForwardM.setPower(-0.5);
+                }
+            }
 
-            moveLeft(gamepad1.left_trigger*drivespeed);
-            moveRight(gamepad1.right_trigger*drivespeed);
+            if (gamepad2.start && gamepad2mode == 1){gamepad2mode = 2;}
+            if (gamepad2.start && gamepad2mode == 2){gamepad2mode = 1;}
+
+            if (gamepad2mode == 1)
+            {
+                latchLeftM.setPower(-gamepad2.left_stick_y);
+                latchRightM.setPower(-gamepad2.left_stick_y);
+
+                if (gamepad2.right_trigger > 0.1) {
+                    latchLeftS.setPosition(1);
+                    latchRightS.setPosition(0);
+                }else{
+                    if (gamepad2.left_trigger > 0.1) {
+                        latchLeftS.setPosition(0);
+                        latchRightS.setPosition(1);
+                    }
+                }
+
+                collectorUpDownS.setPosition(gamepad2.right_stick_y*0.5+1);
+
+                if (gamepad2.a) {
+                    collectorS.setPosition(1);
+                }else{
+                    if (gamepad2.y) {
+                        collectorS.setPosition(0);
+                    }else{
+                        if (gamepad2.b) {
+                            collectorS.setPosition(0.5);
+                        }
+                    }
+                }
+            }
+
+            if (gamepad2mode == 2)
+            {
+                if (gamepad2.a) {
+                    samplingS.setPosition(.65);
+                }else{
+                    if (gamepad2.b){
+                        samplingS.setPosition(0);
+                    }
+                }
+
+                if (gamepad2.x){
+                    markerS.setPosition(1);
+                }else{
+                    if (gamepad2.y){
+                        markerS.setPosition(0);
+                    }
+                }
+            }
+
+
+
+
 
             idle();
         }
@@ -79,7 +182,6 @@ public class TeleOp2 extends LinearOpMode
     {
         //this function is to move forward.
         //all motors move forward
-        telemetry.addData("f", HALFDRIVESPEED);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -89,7 +191,10 @@ public class TeleOp2 extends LinearOpMode
     {
         //this function is to move backward
         //all motors move back
-        driveForward(-power);
+        driveFLM.setPower(-power);
+        driveFRM.setPower(-power);
+        driveBLM.setPower(-power);
+        driveBRM.setPower(-power);
     }
     public void spinLeft(double power)
     {
@@ -106,7 +211,10 @@ public class TeleOp2 extends LinearOpMode
         //spins the robot right
         //the right side moves backward &
         //the left side motors move forward
-        spinLeft(-power);
+        driveFLM.setPower(power);
+        driveFRM.setPower(-power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(-power);
     }
     public void moveLeft(double power)
     {
@@ -123,7 +231,10 @@ public class TeleOp2 extends LinearOpMode
         //slides the robot right
         //the front right and back left motors move backward
         //while the front left and back right motors move forward
-        moveLeft(-power);
+        driveFLM.setPower(power);
+        driveFRM.setPower(-power);
+        driveBLM.setPower(-power);
+        driveBRM.setPower(power);
     }
     public void stopMoving()
     {
@@ -132,11 +243,18 @@ public class TeleOp2 extends LinearOpMode
         driveBLM.setPower(0);
         driveBRM.setPower(0);
     }
-    public void initializeMotors(DcMotor driveFLM, DcMotor driveFRM, DcMotor driveBLM, DcMotor driveBRM)
+    public void mineralDropping() throws InterruptedException
     {
-        this.driveFLM = driveFLM;
-        this.driveFRM = driveFRM;
-        this.driveBLM = driveBLM;
-        this.driveBRM = driveBRM;
+        linearUpDownM.setPower(0.5);
+        Thread.sleep(2000);
+        linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        mineralDropperS.setPosition(.65);
+        Thread.sleep(1000);
+        mineralDropperS.setPosition(0.5);
+        Thread.sleep(400);
+        mineralDropperS.setPosition(.35);
+        Thread.sleep(1000);
+        linearUpDownM.setPower(-0.5);
+        Thread.sleep(1000);
     }
 }

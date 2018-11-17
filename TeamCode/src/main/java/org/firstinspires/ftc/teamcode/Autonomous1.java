@@ -78,24 +78,47 @@ public class Autonomous1 extends LinearOpMode {
             //Delatch();
 
             //this line moves right
-            driveForward(0.1, 300);
-            driveBackward(0.1, 300);
-            spinLeft(0.1,300);
-            spinRight(0.1, 300);
-            moveLeft(0.1, 300);
-            moveRight(0.1, 300);
-
-
-            //driveForward(0.20, 600);
-            //spinRight(0.20, 1120);
-            //moveLeft(0.20, 100000);
-
+            moveWithEncoders(0.1, 1, 1000);
+            moveWithEncoders(0.1, 2, 1000);
+            moveWithEncoders(0.1, 3, 1000);
+            moveWithEncoders(0.1, 4, 1000);
+            moveWithEncoders(0.1, 5, 1000);
+            moveWithEncoders(0.1, 6, 1000);
+            
             //SamplingSection();
 
             yellowVision.disable();
     }
-    public void move(double power, int FL, int FR, int BL, int BR)
+    public void move(double power, int mode)
     {
+        int FL = 0;
+        int FR = 0;
+        int BL = 0;
+        int BR = 0;
+
+        if(mode == 1){
+            FL = 1; FR = 1; BL = 1; BR = 1;
+        }else{
+            if(mode == 2) {
+                FL = -1; FR = -1; BL = -1; BR = -1;
+            }else{
+                if(mode == 3) {
+                    FL = -1; FR = 1; BL = -1; BR = 1;
+                }else{
+                    if(mode == 4) {
+                        FL = 1; FR = -1; BL = 1; BR = -1;
+                    }else{
+                        if(mode == 5) {
+                            FL = -1; FR = 1; BL = 1; BR = -1;
+                        }else{
+                            if(mode == 6) {
+                                FL = 1; FR = -1; BL = -1; BR = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // 1, 1, 1, 1 goes forward
         //-1,-1,-1,-1 goes backward
         //-1, 1,-1, 1 spins left
@@ -109,10 +132,10 @@ public class Autonomous1 extends LinearOpMode {
     }
     public void moveWithEncoders(double power, int mode, int ticks)
     {
-        int FLE = 1;
-        int FRE = 1;
-        int BLE = 1;
-        int BRE = 1;
+        int FLE = 0;
+        int FRE = 0;
+        int BLE = 0;
+        int BRE = 0;
 
         if(mode == 1){
             FLE = 1; FRE = 1; BLE = 1; BRE = 1;
@@ -156,7 +179,11 @@ public class Autonomous1 extends LinearOpMode {
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //drive based on mode
-        move(power,FLE,FRE,BLE,BRE);
+        driveFLM.setPower(power*FLE);
+        driveFRM.setPower(power*FRE);
+        driveBLM.setPower(power*BLE);
+        driveBRM.setPower(power*BRE);
+
 
         //wait until target position
         while (driveFLM.isBusy() && driveFRM.isBusy() /*&& driveBLM.isBusy() && driveBRM.isBusy()*/)
@@ -165,7 +192,10 @@ public class Autonomous1 extends LinearOpMode {
         }
 
         //stopMoving();
-        move(0,0,0,0,0);
+        driveFLM.setPower(power*FLE);
+        driveFRM.setPower(power*FRE);
+        driveBLM.setPower(power*BLE);
+        driveBRM.setPower(power*BRE);
 
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -240,7 +270,6 @@ public class Autonomous1 extends LinearOpMode {
     public void driveForward(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
-        encoderSetMode(ticks);
         driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -259,7 +288,7 @@ public class Autonomous1 extends LinearOpMode {
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //driveForward(power);
-        move(power,1,1,1,1);
+        move(power,1);
 
         //wait until target position
         while (driveFLM.isBusy() && driveFRM.isBusy() /*&& driveBLM.isBusy() && driveBRM.isBusy()*/)
@@ -268,13 +297,12 @@ public class Autonomous1 extends LinearOpMode {
         }
 
         //stopMoving();
-        move(0,0,0,0,0);
+        move(0,0);
 
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveBackward(double power, int ticks) throws InterruptedException
@@ -285,23 +313,22 @@ public class Autonomous1 extends LinearOpMode {
     public void spinLeft(double power, int ticks)
     {
         //Reset Encoders
-        encoderSetMode(ticks);
-//        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        //set target position
-//        driveFLM.setTargetPosition(ticks);
-//        driveFRM.setTargetPosition(ticks);
-//        driveBLM.setTargetPosition(ticks);
-//        driveBRM.setTargetPosition(ticks);
-//
-//        //set ot RUN_TO_POSITION mode
-//        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(ticks);
+        driveFRM.setTargetPosition(ticks);
+        driveBLM.setTargetPosition(ticks);
+        driveBRM.setTargetPosition(ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //spinLeft(power);
         /*driveFLM.setPower(-power);
@@ -309,7 +336,7 @@ public class Autonomous1 extends LinearOpMode {
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
         */
-        move(power,-1, 1,-1, 1);
+        move(power,3);
         //wait until target position
         while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() /*&& driveBRM.isBusy()*/)
         {
@@ -317,12 +344,11 @@ public class Autonomous1 extends LinearOpMode {
         }
 
         //stopMoving();
-        move(0,0,0,0,0);
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        move(0,0);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void setMode(DcMotor.RunMode runMode){
@@ -335,11 +361,10 @@ public class Autonomous1 extends LinearOpMode {
 
     private void encoderSetMode(int ticks){
 
-        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //set target position
         driveFLM.setTargetPosition(ticks);
@@ -348,12 +373,10 @@ public class Autonomous1 extends LinearOpMode {
         driveBRM.setTargetPosition(ticks);
 
         //set ot RUN_TO_POSITION mode
-
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 
@@ -365,23 +388,22 @@ public class Autonomous1 extends LinearOpMode {
     public void moveLeft(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
-        encoderSetMode(ticks);
-//        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        //set target position
-//        driveFLM.setTargetPosition(ticks);
-//        driveFRM.setTargetPosition(ticks);
-//        driveBLM.setTargetPosition(ticks);
-//        driveBRM.setTargetPosition(ticks);
-//
-//        //set ot RUN_TO_POSITION mode
-//        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(ticks);
+        driveFRM.setTargetPosition(ticks);
+        driveBLM.setTargetPosition(ticks);
+        driveBRM.setTargetPosition(ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //moveLeft(power);
         /*driveFLM.setPower(-power);
@@ -389,7 +411,7 @@ public class Autonomous1 extends LinearOpMode {
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
         */
-        move(power,-1, 1, 1,-1);
+        move(power,5);
 
         //wait until target position
         while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() /*&& driveBRM.isBusy()*/)
@@ -398,13 +420,12 @@ public class Autonomous1 extends LinearOpMode {
         }
 
         //stopMoving();
-        move(0,0,0,0,0);
+        move(0,0);
 
-        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void moveRight(double power, int ticks) throws InterruptedException
