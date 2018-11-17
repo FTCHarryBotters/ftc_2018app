@@ -84,7 +84,7 @@ public class Autonomous1 extends LinearOpMode {
             moveWithEncoders(0.1, 4, 1000);
             moveWithEncoders(0.1, 5, 1000);
             moveWithEncoders(0.1, 6, 1000);
-            
+
             //SamplingSection();
 
             yellowVision.disable();

@@ -79,8 +79,8 @@ public class TeleOp2 extends LinearOpMode
 
         waitForStart();
 
-        while(opModeIsActive())
-        {
+        while(opModeIsActive()) {
+
             //lets KV change the speed of the robot
             if (gamepad1.x){
                 drivespeed = DRIVESPEEDFULL;
@@ -106,8 +106,7 @@ public class TeleOp2 extends LinearOpMode
             moveLeft(gamepad1.left_trigger);
             moveRight(gamepad1.right_trigger);
 
-            if (gamepad1.a)
-            {
+            if (gamepad1.a) {
                 mineralDropping();
             }
 
@@ -119,11 +118,19 @@ public class TeleOp2 extends LinearOpMode
                 }
             }
 
+            if (gamepad1.dpad_up) {
+                linearUpDownM.setPower(0.5);
+            }else{
+                if (gamepad1.dpad_down) {
+                    linearUpDownM.setPower(-0.5);
+                }
+            }
+
             if (gamepad2.start && gamepad2mode == 1){gamepad2mode = 2;}
             if (gamepad2.start && gamepad2mode == 2){gamepad2mode = 1;}
 
-            if (gamepad2mode == 1)
-            {
+            if (gamepad2mode == 1) {
+
                 latchLeftM.setPower(-gamepad2.left_stick_y);
                 latchRightM.setPower(-gamepad2.left_stick_y);
 
@@ -137,7 +144,7 @@ public class TeleOp2 extends LinearOpMode
                     }
                 }
 
-                collectorUpDownS.setPosition(gamepad2.right_stick_y*0.5+1);
+                collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
 
                 if (gamepad2.a) {
                     collectorS.setPosition(1);
@@ -152,8 +159,8 @@ public class TeleOp2 extends LinearOpMode
                 }
             }
 
-            if (gamepad2mode == 2)
-            {
+            if (gamepad2mode == 2) {
+
                 if (gamepad2.a) {
                     samplingS.setPosition(.65);
                 }else{
@@ -170,10 +177,6 @@ public class TeleOp2 extends LinearOpMode
                     }
                 }
             }
-
-
-
-
 
             idle();
         }
