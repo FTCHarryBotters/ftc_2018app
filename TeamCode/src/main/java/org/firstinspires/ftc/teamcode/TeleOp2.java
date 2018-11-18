@@ -54,7 +54,7 @@ public class TeleOp2 extends LinearOpMode
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
         latchLeftM.setDirection(DcMotor.Direction.FORWARD);
         latchRightM.setDirection(DcMotor.Direction.REVERSE);
-        linearForwardM.setDirection(DcMotor.Direction.REVERSE);
+        linearForwardM.setDirection(DcMotor.Direction.FORWARD);
         linearUpDownM.setDirection(DcMotor.Direction.REVERSE);
 
         //set servos to th configuration
@@ -71,11 +71,6 @@ public class TeleOp2 extends LinearOpMode
 
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDQRTR;
-
-        //declare gamepad2mode variable.
-        // michael can use this variable
-        //and the start button to change wat he controls
-        int gamepad2mode = 1;
 
         waitForStart();
 
@@ -99,22 +94,24 @@ public class TeleOp2 extends LinearOpMode
                 }
             }
 
-            driveFLM.setPower(-gamepad1.left_stick_y);
-            driveFRM.setPower(-gamepad1.right_stick_y);
-            driveBLM.setPower(-gamepad1.left_stick_y);
-            driveBRM.setPower(-gamepad1.right_stick_y);
-            moveLeft(gamepad1.left_trigger);
-            moveRight(gamepad1.right_trigger);
+            driveFLM.setPower(-gamepad1.left_stick_y*drivespeed);
+            driveFRM.setPower(-gamepad1.right_stick_y*drivespeed);
+            driveBLM.setPower(-gamepad1.left_stick_y*drivespeed);
+            driveBRM.setPower(-gamepad1.right_stick_y*drivespeed);
+            moveLeft(gamepad1.left_trigger*drivespeed);
+            moveRight(gamepad1.right_trigger*drivespeed);
 
-            if (gamepad1.a) {
-                mineralDropping();
-            }
+//            if (gamepad1.a) {
+//                mineralDropping();
+//            }
 
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
             }else{
                 if (gamepad1.left_bumper) {
                     linearForwardM.setPower(-0.5);
+                }else{
+                    linearForwardM.setPower(0);
                 }
             }
 
@@ -123,60 +120,48 @@ public class TeleOp2 extends LinearOpMode
             }else{
                 if (gamepad1.dpad_down) {
                     linearUpDownM.setPower(-0.5);
+                }else{
+                    linearUpDownM.setPower(0);
                 }
             }
 
-            if (gamepad2.start && gamepad2mode == 1){gamepad2mode = 2;}
-            if (gamepad2.start && gamepad2mode == 2){gamepad2mode = 1;}
-
-            if (gamepad2mode == 1) {
-
-                latchLeftM.setPower(-gamepad2.left_stick_y);
-                latchRightM.setPower(-gamepad2.left_stick_y);
-
-                if (gamepad2.right_trigger > 0.1) {
-                    latchLeftS.setPosition(1);
-                    latchRightS.setPosition(0);
+            if (gamepad1.a) {
+                mineralDropperS.setPosition(0.60);
+            }else{
+                if (gamepad1.b) {
+                    mineralDropperS.setPosition(0.40);
                 }else{
-                    if (gamepad2.left_trigger > 0.1) {
-                        latchLeftS.setPosition(0);
-                        latchRightS.setPosition(1);
-                    }
+                    mineralDropperS.setPosition(0.50);
                 }
+            }
 
-                collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
+            latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
+            latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
 
-                if (gamepad2.a) {
-                    collectorS.setPosition(1);
+            if (gamepad2.right_trigger > 0.1) {
+                latchLeftS.setPosition(1);
+                latchRightS.setPosition(0);
+            }else{
+                if (gamepad2.left_trigger > 0.1) {
+                    latchLeftS.setPosition(0);
+                    latchRightS.setPosition(1);
+                }
+            }
+
+            collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
+
+            if (gamepad2.a) {
+                collectorS.setPosition(1);
+            }else{
+                if (gamepad2.y) {
+                    collectorS.setPosition(0);
                 }else{
-                    if (gamepad2.y) {
-                        collectorS.setPosition(0);
-                    }else{
-                        if (gamepad2.b) {
-                            collectorS.setPosition(0.5);
-                        }
+                    if (gamepad2.b) {
+                        collectorS.setPosition(0.5);
                     }
                 }
             }
 
-            if (gamepad2mode == 2) {
-
-                if (gamepad2.a) {
-                    samplingS.setPosition(.65);
-                }else{
-                    if (gamepad2.b){
-                        samplingS.setPosition(0);
-                    }
-                }
-
-                if (gamepad2.x){
-                    markerS.setPosition(1);
-                }else{
-                    if (gamepad2.y){
-                        markerS.setPosition(0);
-                    }
-                }
-            }
 
             idle();
         }
@@ -246,18 +231,18 @@ public class TeleOp2 extends LinearOpMode
         driveBLM.setPower(0);
         driveBRM.setPower(0);
     }
-    public void mineralDropping() throws InterruptedException
-    {
-        linearUpDownM.setPower(0.5);
-        Thread.sleep(2000);
-        linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        mineralDropperS.setPosition(.65);
-        Thread.sleep(1000);
-        mineralDropperS.setPosition(0.5);
-        Thread.sleep(400);
-        mineralDropperS.setPosition(.35);
-        Thread.sleep(1000);
-        linearUpDownM.setPower(-0.5);
-        Thread.sleep(1000);
-    }
+//    public void mineralDropping() throws InterruptedException
+//    {
+//        linearUpDownM.setPower(0.5);
+//        Thread.sleep(2000);
+//        linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        mineralDropperS.setPosition(.35);
+//        Thread.sleep(1000);
+//        mineralDropperS.setPosition(0.5);
+//        Thread.sleep(400);
+//        mineralDropperS.setPosition(.65);
+//        Thread.sleep(1000);
+//        linearUpDownM.setPower(-0.5);
+//        Thread.sleep(1000);
+//    }
 }
