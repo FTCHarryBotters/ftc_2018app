@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 
 @TeleOp(name = "TeleOp2", group = "Sample")
 public class TeleOp2 extends LinearOpMode
@@ -33,6 +37,12 @@ public class TeleOp2 extends LinearOpMode
     private Servo collectorS;
     private Servo collectorUpDownS;
     private Servo mineralDropperS;
+
+    //declare sensor(s)
+    private DigitalChannel linearUpDownS;
+
+    //set touchsensor boolean
+    private boolean isTouchSensor = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,15 +76,23 @@ public class TeleOp2 extends LinearOpMode
         collectorUpDownS = hardwareMap.servo.get("collectorUpDownS");
         mineralDropperS  = hardwareMap.servo.get("mineralDropperS");
 
+        //set sensor(s) to the configuration
+        linearUpDownS = hardwareMap.digitalChannel.get("linearUpDownS");
+        linearUpDownS.setMode(DigitalChannel.Mode.INPUT);
+
         //declare drivespeed variable. this is to change th speed that th robot moves
         double drivespeed = DRIVESPEED3BY4;
 
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDQRTR;
 
+        isTouchSensor = linearUpDownS.getState();
+
         waitForStart();
 
         while(opModeIsActive()) {
+
+            isTouchSensor ^= true;
 
             //lets KV change the speed of the robot
             if (gamepad1.x){
@@ -101,10 +119,6 @@ public class TeleOp2 extends LinearOpMode
             moveLeft(gamepad1.left_trigger*drivespeed);
             moveRight(gamepad1.right_trigger*drivespeed);
 
-//            if (gamepad1.a) {
-//                mineralDropping();
-//            }
-
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
             }else{
@@ -118,7 +132,7 @@ public class TeleOp2 extends LinearOpMode
             if (gamepad1.dpad_up) {
                 linearUpDownM.setPower(0.5);
             }else{
-                if (gamepad1.dpad_down) {
+                if (!isTouchSensor && gamepad1.dpad_down) {
                     linearUpDownM.setPower(-0.5);
                 }else{
                     linearUpDownM.setPower(0);
@@ -134,6 +148,8 @@ public class TeleOp2 extends LinearOpMode
                     mineralDropperS.setPosition(0.50);
                 }
             }
+
+
 
             latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
             latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
@@ -161,7 +177,6 @@ public class TeleOp2 extends LinearOpMode
                     }
                 }
             }
-
 
             idle();
         }
