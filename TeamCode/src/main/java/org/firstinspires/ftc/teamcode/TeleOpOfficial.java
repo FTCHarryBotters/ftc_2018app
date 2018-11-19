@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 
-@TeleOp(name = "TeleOp2", group = "Sample")
-public class TeleOp2 extends LinearOpMode
+@TeleOp(name = "TeleOpOfficial", group = "Sample")
+public class TeleOpOfficial extends LinearOpMode
 {
     //declare motors
     private DcMotor driveFLM;
@@ -86,13 +86,13 @@ public class TeleOp2 extends LinearOpMode
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDQRTR;
 
-        isTouchSensor = linearUpDownS.getState();
-
         waitForStart();
 
         while(opModeIsActive()) {
 
-            isTouchSensor ^= true;
+            samplingS.setPosition(0);
+
+            isTouchSensor ^= linearUpDownS.getState();
 
             //lets KV change the speed of the robot
             if (gamepad1.x){
@@ -131,27 +131,23 @@ public class TeleOp2 extends LinearOpMode
 
             if (gamepad1.dpad_up) {
                 linearUpDownM.setPower(0.5);
-            }else{
-                if (isTouchSensor) {
+            }
+
+            if (gamepad1.dpad_down) {
+                if (isTouchSensor){
                     linearUpDownM.setPower(0);
+                    linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 }else{
-                    if (gamepad1.dpad_down && !isTouchSensor) {
-                        linearUpDownM.setPower(-0.5);
-                    }
+                    linearUpDownM.setPower(-0.5);
                 }
             }
 
-            if (gamepad1.a) {
-                mineralDropperS.setPosition(0.60);
-            }else{
-                if (gamepad1.b) {
-                    mineralDropperS.setPosition(0.40);
-                }else{
-                    mineralDropperS.setPosition(0.50);
-                }
+            if (!gamepad1.dpad_down && !gamepad1.dpad_up) {
+                linearUpDownM.setPower(0);
+                linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
-
+            
 
             latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
             latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
@@ -177,6 +173,16 @@ public class TeleOp2 extends LinearOpMode
                     if (gamepad2.b) {
                         collectorS.setPosition(0.5);
                     }
+                }
+            }
+
+            if (gamepad2.right_bumper) {
+                mineralDropperS.setPosition(0.60);
+            }else{
+                if (gamepad2.left_bumper) {
+                    mineralDropperS.setPosition(0.40);
+                }else{
+                    mineralDropperS.setPosition(0.50);
                 }
             }
 

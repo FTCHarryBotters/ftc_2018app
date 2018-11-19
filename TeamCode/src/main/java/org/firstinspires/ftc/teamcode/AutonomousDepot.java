@@ -109,24 +109,27 @@ public class AutonomousDepot extends LinearOpMode {
             driveForward(0.4, 400);
             spinRight(0.4, 920);
             driveBackward(0.4, 150);
-            moveLeft(0.3, 100);
+            moveLeft(0.3, 150);
             Thread.sleep(250);
 
             SamplingSection();
 
-            spinRight(0.4, 1400);
+            spinRight(0.4, 1300);
             moveRight(0.2, 600);
-            driveBackward(0.4, 1700);
+            driveBackward(0.4, 1600);
+            moveLeft(0.4, 100);
+            spinRight(0.4, 450);
+            driveBackward(0.4, 450);
 
-//            collectorUpDownS.setPosition(10);
-//            Thread.sleep(1000);
-//            Thread.sleep(500);
-//            markerS.setPosition(.75);
-//            Thread.sleep(1000);
-//            markerS.setPosition(0);
-//            collectorUpDownS.setPosition(0);
-//            Thread.sleep(1000);
-//            collectorUpDownS.setPosition(0.5);
+            collectorUpDownS.setPosition(10);
+            Thread.sleep(1000);
+            Thread.sleep(500);
+            markerS.setPosition(.75);
+            Thread.sleep(1000);
+            markerS.setPosition(0);
+            collectorUpDownS.setPosition(0);
+            Thread.sleep(1000);
+            collectorUpDownS.setPosition(0.5);
 
 //            moveLeft(0.4, 2200);
 
