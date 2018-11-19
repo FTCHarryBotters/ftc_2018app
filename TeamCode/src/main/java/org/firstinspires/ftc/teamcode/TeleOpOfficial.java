@@ -113,9 +113,8 @@ public class TeleOpOfficial extends LinearOpMode
             driveFRM.setPower(gamepad1.right_stick_y);
             driveBLM.setPower(gamepad1.left_stick_y);
             driveBRM.setPower(gamepad1.right_stick_y);
-            moveRight(gamepad1.right_trigger);
             moveLeft(gamepad1.left_trigger);
-
+            moveRight(gamepad1.right_trigger);
 
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
