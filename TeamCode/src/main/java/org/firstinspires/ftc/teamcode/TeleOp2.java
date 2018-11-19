@@ -23,12 +23,6 @@ public class TeleOp2 extends LinearOpMode
     private DcMotor linearForwardM;
     private DcMotor linearUpDownM;
 
-    //Declare drive and latch speed statics
-    private static double DRIVESPEEDFULL = 1;
-    private static double DRIVESPEED3BY4 = 0.5;
-    private static double LATCHSPEEDFULL = 1;
-    private static double LATCHSPEEDQRTR = 0.25;
-
     //declare servos
     private Servo latchLeftS;
     private Servo latchRightS;
@@ -43,6 +37,12 @@ public class TeleOp2 extends LinearOpMode
 
     //set touchsensor boolean
     private boolean isTouchSensor = true;
+
+    //Declare drive and latch speed statics
+    private static double DRIVESPEEDFULL = 1;
+    private static double DRIVESPEED3BY4 = 0.5;
+    private static double LATCHSPEEDFULL = 1;
+    private static double LATCHSPEEDQRTR = 0.25;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -132,10 +132,12 @@ public class TeleOp2 extends LinearOpMode
             if (gamepad1.dpad_up) {
                 linearUpDownM.setPower(0.5);
             }else{
-                if (!isTouchSensor && gamepad1.dpad_down) {
-                    linearUpDownM.setPower(-0.5);
-                }else{
+                if (isTouchSensor) {
                     linearUpDownM.setPower(0);
+                }else{
+                    if (gamepad1.dpad_down && !isTouchSensor) {
+                        linearUpDownM.setPower(-0.5);
+                    }
                 }
             }
 
