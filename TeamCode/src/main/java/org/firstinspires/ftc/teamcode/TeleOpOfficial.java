@@ -67,6 +67,12 @@ public class TeleOpOfficial extends LinearOpMode
         linearForwardM.setDirection(DcMotor.Direction.FORWARD);
         linearUpDownM.setDirection(DcMotor.Direction.REVERSE);
 
+        //NOT using encoders
+        driveFLM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //set servos to th configuration
         latchLeftS       = hardwareMap.servo.get("latchLeftS");
         latchRightS      = hardwareMap.servo.get("latchRightS");
@@ -80,8 +86,6 @@ public class TeleOpOfficial extends LinearOpMode
         linearUpDownS = hardwareMap.digitalChannel.get("linearUpDownS");
         linearUpDownS.setMode(DigitalChannel.Mode.INPUT);
 
-        //declare drivespeed variable. this is to change th speed that th robot moves
-        double drivespeed = DRIVESPEED3BY4;
 
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDQRTR;
@@ -90,18 +94,11 @@ public class TeleOpOfficial extends LinearOpMode
 
         while(opModeIsActive()) {
 
+            markerS.setPosition(markerS.getPosition());
+
             samplingS.setPosition(0);
 
             isTouchSensor ^= linearUpDownS.getState();
-
-            //lets KV change the speed of the robot
-            if (gamepad1.x){
-                drivespeed = DRIVESPEEDFULL;
-            }else{
-                if (gamepad1.y){
-                    drivespeed = DRIVESPEED3BY4;
-                }
-            }
 
             //lets Mike change the speed of the Latch arm
             if (gamepad2.dpad_up){
@@ -112,12 +109,13 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
-            driveFLM.setPower(-gamepad1.left_stick_y*drivespeed);
-            driveFRM.setPower(-gamepad1.right_stick_y*drivespeed);
-            driveBLM.setPower(-gamepad1.left_stick_y*drivespeed);
-            driveBRM.setPower(-gamepad1.right_stick_y*drivespeed);
-            moveLeft(gamepad1.left_trigger*drivespeed);
-            moveRight(gamepad1.right_trigger*drivespeed);
+            driveFLM.setPower(gamepad1.left_stick_y);
+            driveFRM.setPower(gamepad1.right_stick_y);
+            driveBLM.setPower(gamepad1.left_stick_y);
+            driveBRM.setPower(gamepad1.right_stick_y);
+            moveRight(gamepad1.right_trigger);
+            moveLeft(gamepad1.left_trigger);
+
 
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
@@ -147,7 +145,7 @@ public class TeleOpOfficial extends LinearOpMode
                 linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
-            
+
 
             latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
             latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
