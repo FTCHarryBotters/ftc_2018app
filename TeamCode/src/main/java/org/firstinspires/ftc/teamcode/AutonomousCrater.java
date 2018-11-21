@@ -2,20 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.opencv.core.MatOfPoint;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "AutonomousDepot", group = "Sample")
-public class AutonomousDepot extends LinearOpMode {
+@Autonomous(name = "AutonomousCrater", group = "Sample")
+public class AutonomousCrater extends LinearOpMode {
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
@@ -88,34 +85,20 @@ public class AutonomousDepot extends LinearOpMode {
 
         waitForStart();
 
-            driveBackward(0.1, 50);
-            moveRight(0.3, 200);
-            driveForward(0.4, 400);
-            spinRight(0.4, 920);
-            driveBackward(0.4, 150);
-            moveLeft(0.3, 150);
-            Thread.sleep(250);
+        driveBackward(0.1, 50);
+        moveRight(0.3, 200);
+        driveForward(0.4, 400);
+        spinRight(0.4, 920);
+        driveBackward(0.4, 150);
+        moveLeft(0.3, 150);
+        Thread.sleep(250);
 
-            SamplingSection();
+        SamplingSection();
 
-            spinRight(0.4, 1300);
-            moveRight(0.2, 600);
-            driveBackward(0.4, 1600);
-            moveLeft(0.4, 100);
-            spinRight(0.4, 450);
-            driveBackward(0.4, 450);
+        spinRight(0.4, 1300);
+        moveRight(0.2, 600);
 
-            collectorUpDownS.setPosition(10);
-            Thread.sleep(1000);
-            Thread.sleep(500);
-            markerS.setPosition(.75);
-            Thread.sleep(1000);
-            markerS.setPosition(0);
-            collectorUpDownS.setPosition(0);
-            Thread.sleep(1000);
-            collectorUpDownS.setPosition(0.5);
-
-            yellowVision.disable();
+        yellowVision.disable();
     }
     //theses methods move the robots without using encoders.
     //they were made because calling methods from teleop2 did not work and I
@@ -179,6 +162,7 @@ public class AutonomousDepot extends LinearOpMode {
     }
 
     //the following methods deal with moving the robot around with encoders.
+    //these are the ones you will most likely use in your code.
     public void driveForward(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -199,7 +183,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //driveForward
+        //driveForward(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -242,7 +226,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //driveBackward
+        //driveForward(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -285,7 +269,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //spinLeft
+        //spinLeft(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -328,7 +312,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //spinRight
+        //driveForward(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -371,7 +355,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //moveLeft
+        //moveLeft(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -414,7 +398,7 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //moveRIght
+        //driveForward(power);
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);

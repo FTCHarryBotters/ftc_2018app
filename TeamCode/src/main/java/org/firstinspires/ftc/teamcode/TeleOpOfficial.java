@@ -144,11 +144,6 @@ public class TeleOpOfficial extends LinearOpMode
                 linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
-
-
-            latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
-            latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
-
             if (gamepad2.right_trigger > 0.1) {
                 latchLeftS.setPosition(1);
                 latchRightS.setPosition(0);
@@ -251,18 +246,4 @@ public class TeleOpOfficial extends LinearOpMode
         driveBLM.setPower(0);
         driveBRM.setPower(0);
     }
-//    public void mineralDropping() throws InterruptedException
-//    {
-//        linearUpDownM.setPower(0.5);
-//        Thread.sleep(2000);
-//        linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        mineralDropperS.setPosition(.35);
-//        Thread.sleep(1000);
-//        mineralDropperS.setPosition(0.5);
-//        Thread.sleep(400);
-//        mineralDropperS.setPosition(.65);
-//        Thread.sleep(1000);
-//        linearUpDownM.setPower(-0.5);
-//        Thread.sleep(1000);
-//    }
 }
