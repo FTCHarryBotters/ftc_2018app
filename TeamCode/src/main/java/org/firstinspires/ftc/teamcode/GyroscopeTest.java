@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import java.util.Locale;
 
 @Autonomous(name = "GyroscopeTest", group = "Sample")
-@Disabled
 public class GyroscopeTest extends LinearOpMode{
     //declaration
     private DcMotor driveFLM;
@@ -30,6 +29,8 @@ public class GyroscopeTest extends LinearOpMode{
     private BNO055IMU GyroS;
     Orientation angles;
     Acceleration gravity;
+
+    float gyroreset;
 
     public void runOpMode() throws InterruptedException {
         //configuration
@@ -59,18 +60,12 @@ public class GyroscopeTest extends LinearOpMode{
 
             GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        while (opModeIsActive()) {
-
             telemetry.update();
 
-            if(angles.firstAngle > -45)
-            {
-                spin(0.2);
-            }else{
-                stopmotors();
-            }
+            spinLeftG(0.5, 90);
+            spinRightG(0.5, 90);
+            //2147483674
 
-        }
     }
     //methods
 
@@ -85,6 +80,41 @@ public class GyroscopeTest extends LinearOpMode{
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+    }
+    public void spinLeft(double power)
+    {
+        //spins the robot left
+        //the left side moves backward &
+        //the right side motors move forward
+        driveFLM.setPower(-power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(-power);
+        driveBRM.setPower(power);
+    }
+    public void spinRight(double power)
+    {
+        //spins the robot right
+        //the right side moves backward &
+        //the left side motors move forward
+        spinLeft(-power);
+    }
+    private void spinLeftG(double power, int yaw) throws NullPointerException
+    {
+        if (angles.firstAngle < yaw)
+        {
+            spinLeft(power);
+        }else{
+            stopmotors();
+        }
+    }
+    private void spinRightG(double power, int yaw)throws NullPointerException
+    {
+        if (angles.firstAngle > -yaw)
+        {
+            spinRight(power);
+        }else{
+            stopmotors();
+        }
     }
     private void composeTelemetry() {
 

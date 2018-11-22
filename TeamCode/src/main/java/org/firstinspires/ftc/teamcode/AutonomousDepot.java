@@ -217,6 +217,8 @@ public class AutonomousDepot extends LinearOpMode {
     //the following two methods turn the robot using the Gyroscope rather than the encoders or time
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
+        composeTelemetry();
+        telemetry.update();
         if (angles.firstAngle < yaw)
         {
             telemetry.update();
@@ -227,6 +229,8 @@ public class AutonomousDepot extends LinearOpMode {
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
+        composeTelemetry();
+        telemetry.update();
         if (angles.firstAngle > -yaw)
         {
             telemetry.update();
@@ -562,7 +566,6 @@ public class AutonomousDepot extends LinearOpMode {
             gravity  = GyroS.getGravity();
         }
         });
-
         telemetry.addLine()
                 .addData("status", new Func<String>() {
                     @Override public String value() {
