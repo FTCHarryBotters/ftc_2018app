@@ -62,8 +62,9 @@ public class GyroscopeTest extends LinearOpMode{
 
             telemetry.update();
 
-            spinLeftG(0.5, 90);
-            spinRightG(0.5, 90);
+            spinLeftG(0.2, 90);
+            spinRightG(0.2, 90);
+
             //2147483674
 
     }
@@ -100,21 +101,21 @@ public class GyroscopeTest extends LinearOpMode{
     }
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
-        if (angles.firstAngle < yaw)
+        while (angles.firstAngle < yaw)
         {
             spinLeft(power);
-        }else{
-            stopmotors();
         }
+        stopmotors();
+
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
-        if (angles.firstAngle > -yaw)
+        while (angles.firstAngle > -yaw)
         {
             spinRight(power);
-        }else{
-            stopmotors();
         }
+        stopmotors();
+
     }
     private void composeTelemetry() {
 
