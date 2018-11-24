@@ -116,12 +116,7 @@ public class AutonomousDepot extends LinearOpMode {
 
             GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-            spinLeftG(0.2, 45);
-            spinRightG(0.2, 45);
-            spinLeftG(0.2, 90);
-            spinRightG(0.2, 90);
-            spinLeftG(0.2, 135);
-            spinRightG(0.2, 135);
+            deLatchRobot();
             /*
             driveBackwardE(0.1, 50);
             moveRightE(0.3, 200);
@@ -499,18 +494,23 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    //methods for the latch arm
     private void latchArm(double power, long time) throws InterruptedException
     {
         latchLeftM.setPower(power);
         latchRightM.setPower(power);
         Thread.sleep(time);
     }
-    private void deLatchrRobot() throws InterruptedException
+    private void deLatchRobot() throws InterruptedException
     {
-        latchArm(1, 300);
+        latchArm(1, 500);
         latchLeftS.setPosition(1);
         latchRightS.setPosition(0);
-        latchArm(-0.1, 2000);
+        latchArm(-0.25, 1300);
+        latchArm(0, 10);
+        latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     //the following methods deal with the sampling
@@ -566,6 +566,8 @@ public class AutonomousDepot extends LinearOpMode {
             }
         }
     }
+
+    //method for the IMU
     private void composeTelemetry() throws NullPointerException{
 
         // At the beginning of each telemetry update, grab a bunch of data
