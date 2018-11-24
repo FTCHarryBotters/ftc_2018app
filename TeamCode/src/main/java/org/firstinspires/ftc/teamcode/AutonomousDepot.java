@@ -499,6 +499,19 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    private void latchArm(double power, long time) throws InterruptedException
+    {
+        latchLeftM.setPower(power);
+        latchRightM.setPower(power);
+        Thread.sleep(time);
+    }
+    private void deLatchrRobot() throws InterruptedException
+    {
+        latchArm(1, 300);
+        latchLeftS.setPosition(1);
+        latchRightS.setPosition(0);
+        latchArm(-0.1, 2000);
+    }
 
     //the following methods deal with the sampling
     public void EnderCVContoursTest()

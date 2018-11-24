@@ -68,7 +68,7 @@ public class GyroscopeTest extends LinearOpMode{
     private void resetGyro()
     {
         float yawcorrection = angles.firstAngle;
-        currentAngle = angles.firstAngle- yawcorrection;
+        currentAngle = angles.firstAngle - yawcorrection;
         if(currentAngle <= -180){
             currentAngle = currentAngle + 360;
         }
@@ -81,6 +81,13 @@ public class GyroscopeTest extends LinearOpMode{
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+    }
+    private void setZPB()
+    {
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void spinLeft(double power)
     {
@@ -101,10 +108,12 @@ public class GyroscopeTest extends LinearOpMode{
     }
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
-        resetGyro();
         spinLeft(power);
-        while (currentAngle < yaw) {}
+        while (currentAngle < yaw) {
+            telemetry.update();
+        }
         stopmotors();
+        setZPB();
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
@@ -112,7 +121,7 @@ public class GyroscopeTest extends LinearOpMode{
         spinRight(power);
         while (currentAngle > yaw) {}
         stopmotors();
-        stop();
+        setZPB();
     }
     private void composeTelemetry() {
 

@@ -33,16 +33,14 @@ public class TeleOpOfficial extends LinearOpMode
     private Servo mineralDropperS;
 
     //declare sensor(s)
-    private DigitalChannel linearUpDownS;
+    private DigitalChannel linearUpDownN;
 
     //set touchsensor boolean
-    private boolean isTouchSensor = true;
+    private boolean isTouchSensor;
 
-    //Declare drive and latch speed statics
-    private static double DRIVESPEEDFULL = 1;
-    private static double DRIVESPEED3BY4 = 0.5;
+    //Declare latch speed statics
     private static double LATCHSPEEDFULL = 1;
-    private static double LATCHSPEEDQRTR = 0.25;
+    private static double LATCHSPEEDSXTH = 0.16;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,38 +81,54 @@ public class TeleOpOfficial extends LinearOpMode
         mineralDropperS  = hardwareMap.servo.get("mineralDropperS");
 
         //set sensor(s) to the configuration
-        linearUpDownS = hardwareMap.digitalChannel.get("linearUpDownS");
-        linearUpDownS.setMode(DigitalChannel.Mode.INPUT);
+        linearUpDownN = hardwareMap.digitalChannel.get("linearUpDownS");
+        linearUpDownN.setMode(DigitalChannel.Mode.INPUT);
 
 
         //declare latchspeed variable. this is to change th speed of th latch arm
-        double latchspeed = LATCHSPEEDQRTR;
+        double latchspeed = LATCHSPEEDSXTH;
 
         waitForStart();
 
         while(opModeIsActive()) {
 
-            markerS.setPosition(markerS.getPosition());
-
+            //make sure the marker dropper and the sampling arm
+            //don't move when the robot shakes.
+            //since neither KV nor Michael can control them,
+            //if they get in they way of other things,
+            //they can't move them back
+            markerS.setPosition(1);
             samplingS.setPosition(0);
 
-            isTouchSensor ^= linearUpDownS.getState();
+            //this boolean saves information
+            //on whether or not the touch sensor is pressed.
+            //if the touch sensor is pressed, the getState returns false and vice versa.
+            //this is reversed, so the boolean reverses the value with ^=
+            isTouchSensor ^= linearUpDownN.getState();
 
-            //lets Mike change the speed of the Latch arm
+            //lets Mike change the speed of the Latch arm.
+            //He can use 1/6 speed to move the arm into the latch
+            //and he can use full speed to actually lift the robot
             if (gamepad2.dpad_up){
                 latchspeed = LATCHSPEEDFULL;
             }else{
                 if (gamepad2.dpad_down){
-                    latchspeed = LATCHSPEEDQRTR;
+                    latchspeed = LATCHSPEEDSXTH;
                 }
             }
 
-            driveFLM.setPower(gamepad1.left_stick_y);
-            driveFRM.setPower(gamepad1.right_stick_y);
-            driveBLM.setPower(gamepad1.left_stick_y);
-            driveBRM.setPower(gamepad1.right_stick_y);
+
+            //these six lines let KV move the Robot.
+            //the left side of the robot, FLM and BLM are controlled w/ the left stick
+            //the right side of the robot, FRM and BRM are controlled w/ the right stick
+            //he can use the triggers to move left or right.
+            driveFLM.setPower(-gamepad1.left_stick_y);
+            driveFRM.setPower(-gamepad1.right_stick_y);
+            driveBLM.setPower(-gamepad1.left_stick_y);
+            driveBRM.setPower(-gamepad1.right_stick_y);
             moveLeft(gamepad1.left_trigger);
             moveRight(gamepad1.right_trigger);
+
 
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
@@ -127,10 +141,25 @@ public class TeleOpOfficial extends LinearOpMode
             }
 
             if (gamepad1.dpad_up) {
-                linearUpDownM.setPower(0.5);
+                mineralDropperS.setPosition(0.60);
+            }else{
+                if (gamepad1.dpad_down) {
+                    mineralDropperS.setPosition(0.40);
+                }else{
+                    mineralDropperS.setPosition(0.50);
+                }
             }
 
-            if (gamepad1.dpad_down) {
+            //the most annoying code in this program
+            //if KV presses R1, the the up down slide will go up
+            //if he presses L1, then it checks if the touch sensor is pressed.
+            //if it is pressed, then nothing happens.
+            //if it isn't pressed, then it goes down
+            //if neither R1 nor L1 is pressed, nothing happens
+            if (gamepad2.right_bumper) {
+                linearUpDownM.setPower(0.5);
+            }
+            if (gamepad2.left_bumper) {
                 if (isTouchSensor){
                     linearUpDownM.setPower(0);
                     linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -138,17 +167,19 @@ public class TeleOpOfficial extends LinearOpMode
                     linearUpDownM.setPower(-0.5);
                 }
             }
-
-            if (!gamepad1.dpad_down && !gamepad1.dpad_up) {
+            if (!gamepad2.right_bumper && !gamepad2.left_bumper) {
                 linearUpDownM.setPower(0);
                 linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
-            if (gamepad2.right_trigger > 0.1) {
+            latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
+            latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
+
+            if (gamepad2.left_trigger > 0.1) {
                 latchLeftS.setPosition(1);
                 latchRightS.setPosition(0);
             }else{
-                if (gamepad2.left_trigger > 0.1) {
+                if (gamepad2.right_trigger > 0.1) {
                     latchLeftS.setPosition(0);
                     latchRightS.setPosition(1);
                 }
@@ -165,16 +196,6 @@ public class TeleOpOfficial extends LinearOpMode
                     if (gamepad2.b) {
                         collectorS.setPosition(0.5);
                     }
-                }
-            }
-
-            if (gamepad2.right_bumper) {
-                mineralDropperS.setPosition(0.60);
-            }else{
-                if (gamepad2.left_bumper) {
-                    mineralDropperS.setPosition(0.40);
-                }else{
-                    mineralDropperS.setPosition(0.50);
                 }
             }
 
