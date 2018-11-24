@@ -210,6 +210,7 @@ public class AutonomousDepot extends LinearOpMode {
     }
 
     //the following two methods turn the robot using the Gyroscope rather than the encoders or time
+    //they do not work. SAD.
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
         composeTelemetry();
