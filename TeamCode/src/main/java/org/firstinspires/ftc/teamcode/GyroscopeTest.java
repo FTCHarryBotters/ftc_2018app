@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -27,10 +26,10 @@ public class GyroscopeTest extends LinearOpMode{
     private DcMotor driveBRM;
 
     private BNO055IMU GyroS;
-    Orientation angles;
-    Acceleration gravity;
+    private Orientation angles;
+    private Acceleration gravity;
 
-    float gyroreset;
+    private float currentAngle;
 
     public void runOpMode() throws InterruptedException {
         //configuration
@@ -63,18 +62,19 @@ public class GyroscopeTest extends LinearOpMode{
             telemetry.update();
 
             spinLeftG(0.2, 90);
-            spinRightG(0.2, 90);
-
-            //2147483674
 
     }
     //methods
-
-    private void spin(double power) {
-        driveFLM.setPower(power);
-        driveFRM.setPower(-power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(-power);
+    private void resetGyro()
+    {
+        float yawcorrection = angles.firstAngle;
+        currentAngle = angles.firstAngle- yawcorrection;
+        if(currentAngle <= -180){
+            currentAngle = currentAngle + 360;
+        }
+        if (currentAngle > 180){
+            currentAngle = currentAngle - 360;
+        }
     }
     private void stopmotors(){
         driveFLM.setPower(0);
@@ -101,21 +101,18 @@ public class GyroscopeTest extends LinearOpMode{
     }
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
-        while (angles.firstAngle < yaw)
-        {
-            spinLeft(power);
-        }
+        resetGyro();
+        spinLeft(power);
+        while (currentAngle < yaw) {}
         stopmotors();
-
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
-        while (angles.firstAngle > -yaw)
-        {
-            spinRight(power);
-        }
+        resetGyro();
+        spinRight(power);
+        while (currentAngle > yaw) {}
         stopmotors();
-
+        stop();
     }
     private void composeTelemetry() {
 
