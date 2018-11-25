@@ -157,6 +157,13 @@ public class AutonomousDepot extends LinearOpMode {
             Thread.sleep(1000);
             collectorUpDownS.setPosition(0.5);
 
+            driveForwardE(0.4, 450);
+            spinLeftE(0.4, 450);
+            moveRightE(0.4, 100);
+            driveForwardE(0.5, 2500);
+            collectorUpDownS.setPosition(10);
+            Thread.sleep(1000);
+
         //stop the vision system
         yellowVision.disable();
     }
@@ -580,7 +587,7 @@ public class AutonomousDepot extends LinearOpMode {
         }
     }
 
-    //method for the IMU
+    //method for the IMU. works
     private void composeTelemetry() throws NullPointerException{
 
         // At the beginning of each telemetry update, grab a bunch of data
@@ -645,3 +652,4 @@ public class AutonomousDepot extends LinearOpMode {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 }
+//

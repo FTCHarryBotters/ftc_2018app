@@ -93,6 +93,7 @@ public class DeLatchTest extends LinearOpMode{
         {
             latchLeftS.setPosition(1);
             latchRightS.setPosition(0);
+            this.interrupt();
         }
     }
 }

@@ -42,6 +42,8 @@ public class TeleOpOfficial extends LinearOpMode
     private static double LATCHSPEEDFULL = 1;
     private static double LATCHSPEEDSXTH = 0.16;
 
+    Thread mineralDropping;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -86,6 +88,8 @@ public class TeleOpOfficial extends LinearOpMode
 
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDSXTH;
+
+        mineralDropping = new mineralDropping();
 
         waitForStart();
 
@@ -153,6 +157,12 @@ public class TeleOpOfficial extends LinearOpMode
                 }else{
                     mineralDropperS.setPosition(0.50);
                 }
+            }
+
+            if (gamepad1.x){
+                telemetry.addData("is thread", isTouchSensor);
+                telemetry.update();
+                mineralDropping.start();
             }
 
             //the most annoying code in this program
@@ -284,5 +294,39 @@ public class TeleOpOfficial extends LinearOpMode
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+    }
+    private class mineralDropping extends Thread
+    {
+        public mineralDropping () {
+
+        }
+
+        @Override
+        public void run()
+        {
+//            linearUpDownM.setPower(0.5);
+//            try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+//            linearUpDownM.setPower(0);
+//            linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            telemetry.addData("mineralDropping thread", "Thread started");
+            telemetry.update();
+
+            try {
+                mineralDropperS.setPosition(0.60);
+                Thread.sleep(1000);
+                mineralDropperS.setPosition(0.5);
+
+                Thread.sleep(1000);
+
+                mineralDropperS.setPosition(0.40);
+                Thread.sleep(1000);
+                mineralDropperS.setPosition(0.5);
+            } catch (InterruptedException e) { e.printStackTrace(); }
+
+//            linearUpDownM.setPower(-0.5);
+//            try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+//            linearUpDownM.setPower(0);
+        }
     }
 }
