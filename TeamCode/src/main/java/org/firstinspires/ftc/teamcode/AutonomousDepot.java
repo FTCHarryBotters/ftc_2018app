@@ -78,6 +78,7 @@ public class AutonomousDepot extends LinearOpMode {
         linearForwardM.setDirection(DcMotor.Direction.FORWARD);
         linearUpDownM.setDirection(DcMotor.Direction.REVERSE);
 
+        //sets the mode for the encoders
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -110,14 +111,19 @@ public class AutonomousDepot extends LinearOpMode {
         // start the vision system
         yellowVision.enable();
 
+        //used for gyro
         composeTelemetry();
 
         waitForStart();
 
             GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
+            //the following line de latches the robot from the lander
+            //it is still being tested
             deLatchRobot();
-            /*
+
+            //the following lines move the robot from the lander
+            //and line it up so the robot can sample
             driveBackwardE(0.1, 50);
             moveRightE(0.3, 200);
             driveForwardE(0.4, 400);
@@ -126,8 +132,11 @@ public class AutonomousDepot extends LinearOpMode {
             moveLeftE(0.3, 150);
             Thread.sleep(250);
 
+            //samples the gold mineral
             SamplingSection();
 
+            //the following lines move robot from sampling
+            //and line it up fo marker dropping
             spinRightE(0.4, 1300);
             moveRightE(0.2, 600);
             driveBackwardE(0.4, 1600);
@@ -135,6 +144,9 @@ public class AutonomousDepot extends LinearOpMode {
             spinRightE(0.4, 450);
             driveBackwardE(0.4, 450);
 
+            //the following lines drop the marker
+            //the collector mechanism needs to move
+            //before the marker dropper can move
             collectorUpDownS.setPosition(10);
             Thread.sleep(1000);
             Thread.sleep(500);
@@ -144,9 +156,9 @@ public class AutonomousDepot extends LinearOpMode {
             collectorUpDownS.setPosition(0);
             Thread.sleep(1000);
             collectorUpDownS.setPosition(0.5);
-             */
 
-            yellowVision.disable();
+        //stop the vision system
+        yellowVision.disable();
     }
     //theses methods move the robots without using encoders.
     //they were made because calling methods from teleop2 did not work and I

@@ -35,7 +35,7 @@ public class TeleOpOfficial extends LinearOpMode
     //declare sensor(s)
     private DigitalChannel linearUpDownN;
 
-    //set touchsensor boolean
+    //set touch sensor boolean
     private boolean isTouchSensor;
 
     //Declare latch speed statics
@@ -84,7 +84,6 @@ public class TeleOpOfficial extends LinearOpMode
         linearUpDownN = hardwareMap.digitalChannel.get("linearUpDownS");
         linearUpDownN.setMode(DigitalChannel.Mode.INPUT);
 
-
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDSXTH;
 
@@ -130,6 +129,9 @@ public class TeleOpOfficial extends LinearOpMode
             moveRight(gamepad1.right_trigger);
 
 
+            //if KV presses RB, the slide goes forward
+            //if he presses LB, the slide goes back
+            //otherwise, nothing happens
             if (gamepad1.right_bumper) {
                 linearForwardM.setPower(0.5);
             }else{
@@ -140,6 +142,9 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
+            //if KV pressed dpad up, the shoe moves to drop the minerals
+            //if he presses down, if moves back
+            //otherwise nothing happens
             if (gamepad1.dpad_up) {
                 mineralDropperS.setPosition(0.60);
             }else{
@@ -151,11 +156,11 @@ public class TeleOpOfficial extends LinearOpMode
             }
 
             //the most annoying code in this program
-            //if KV presses R1, the the up down slide will go up
-            //if he presses L1, then it checks if the touch sensor is pressed.
+            //if M presses RB, the the up down slide will go up
+            //if he presses LB, then it checks if the touch sensor is pressed.
             //if it is pressed, then nothing happens.
             //if it isn't pressed, then it goes down
-            //if neither R1 nor L1 is pressed, nothing happens
+            //if neither RB nor LB is pressed, nothing happens
             if (gamepad2.right_bumper) {
                 linearUpDownM.setPower(0.5);
             }
@@ -172,9 +177,19 @@ public class TeleOpOfficial extends LinearOpMode
                 linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
+            //the latch motors are powered by M's left stick
+            //if he goes down, the latch moves toward the robot
+            //if he goes up, it moves away from the robot
+            //he pushes down to make the robot lift in the endgame
             latchLeftM.setPower(-gamepad2.left_stick_y*latchspeed);
             latchRightM.setPower(-gamepad2.left_stick_y*latchspeed);
 
+            //the collector mechanism goes up
+            //if M moves his right stick up, and vice versa
+            collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
+
+            //if michael presses the triggers, the latch servos move
+            //LT delatches, and RT latches
             if (gamepad2.left_trigger > 0.1) {
                 latchLeftS.setPosition(1);
                 latchRightS.setPosition(0);
@@ -185,12 +200,14 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
-            collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
-
-            if (gamepad2.a) {
+            //A, B, and Y move the collector flaps
+            //A sucks in mminerals;
+            //Y pushes out minerals, if we get 3 or the wrong type
+            //and B stops the flaps
+            if (gamepad2.y) {
                 collectorS.setPosition(1);
             }else{
-                if (gamepad2.y) {
+                if (gamepad2.a) {
                     collectorS.setPosition(0);
                 }else{
                     if (gamepad2.b) {
@@ -202,6 +219,7 @@ public class TeleOpOfficial extends LinearOpMode
             idle();
         }
     }
+    //methods for moving.
     public void driveForward(double power)
     {
         //this function is to move forward.

@@ -13,6 +13,8 @@ public class DeLatchTest extends LinearOpMode{
     private Servo latchLeftS;
     private Servo latchRightS;
 
+    Thread  delatchServoThread;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //configure
@@ -24,6 +26,8 @@ public class DeLatchTest extends LinearOpMode{
 
         latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        delatchServoThread = new DelatchServoThread();
 
         latchLeftS       = hardwareMap.servo.get("latchLeftS");
         latchRightS      = hardwareMap.servo.get("latchRightS");
@@ -48,6 +52,7 @@ public class DeLatchTest extends LinearOpMode{
     private void latchArmE(double power, int ticks)
     {
         //reset encoders
+
         latchLeftM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         latchRightM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //set target position
@@ -74,9 +79,24 @@ public class DeLatchTest extends LinearOpMode{
     }
     private void deLatchRobot() throws InterruptedException
     {
-        latchArmE(1, 10);
-        latchLeftS.setPosition(1);
-        latchRightS.setPosition(0);
-        //latchArmE(0.5, -4000);
+        delatchServoThread.start();
+        latchArm(1, 200);
+        latchArmE(0.5, -4000);
+    }
+    private class DelatchServoThread  extends Thread
+    {
+        public DelatchServoThread (){
+
+        }
+        @Override
+        public void run()
+        {
+            latchLeftS.setPosition(1);
+            latchRightS.setPosition(0);
+        }
     }
 }
+
+
+
+

@@ -30,6 +30,7 @@ public class GyroscopeTest extends LinearOpMode{
     private Acceleration gravity;
 
     private float currentAngle;
+    private boolean isGyro = false;
 
     public void runOpMode() throws InterruptedException {
         //configuration
@@ -108,12 +109,22 @@ public class GyroscopeTest extends LinearOpMode{
     }
     private void spinLeftG(double power, int yaw) throws NullPointerException
     {
-        spinLeft(power);
-        while (currentAngle < yaw) {
-            telemetry.update();
+        isGyro = false;
+        while (isGyro = false) {
+            if (angles.firstAngle < yaw) {
+                spinLeft(power);
+            }else{
+                isGyro = true;
+            }
         }
         stopmotors();
-        setZPB();
+
+//        spinLeft(power);
+//        while (currentAngle < yaw) {
+//            telemetry.update();
+//        }
+//        stopmotors();
+//        setZPB();
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
