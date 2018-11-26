@@ -310,19 +310,29 @@ public class TeleOpOfficial extends LinearOpMode
 //            linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             telemetry.addData("mineralDropping thread", "Thread started");
-            telemetry.update();
+
 
             try {
                 mineralDropperS.setPosition(0.60);
+                telemetry.addData(" 1.mineralDropperS position", mineralDropperS.getPosition());
+                telemetry.update();
                 Thread.sleep(1000);
                 mineralDropperS.setPosition(0.5);
+                telemetry.addData("2.mineralDropperS position", mineralDropperS.getPosition());
+                telemetry.update();
 
                 Thread.sleep(1000);
 
                 mineralDropperS.setPosition(0.40);
+                telemetry.addData("3.mineralDropperS position", mineralDropperS.getPosition());
+                telemetry.update();
                 Thread.sleep(1000);
                 mineralDropperS.setPosition(0.5);
-            } catch (InterruptedException e) { e.printStackTrace(); }
+                telemetry.addData("4.mineralDropperS position", mineralDropperS.getPosition());
+                telemetry.update();
+            } catch (InterruptedException e) {  telemetry.addData("mineralDropping InterruptedException", e.getMessage());}
+              catch (Exception e) { telemetry.addData("mineralDropping Exception thread", e.getMessage()); }
+
 
 //            linearUpDownM.setPower(-0.5);
 //            try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }

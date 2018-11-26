@@ -114,32 +114,30 @@ public class AutonomousCrater extends LinearOpMode {
 
         waitForStart();
 
-        GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            driveBackwardE(0.1, 50);
+            moveRightE(0.3, 200);
+            driveForwardE(0.4, 400);
+            spinRightE(0.4, 920);
+            driveBackwardE(0.4, 150);
+            moveLeftE(0.3, 150);
+            Thread.sleep(250);
 
-        driveBackwardE(0.1, 50);
-        moveRightE(0.3, 200);
-        driveForwardE(0.4, 400);
-        spinRightE(0.4, 920);
-        driveBackwardE(0.4, 150);
-        moveLeftE(0.3, 150);
-        Thread.sleep(250);
+            SamplingSection();
 
-        SamplingSection();
+            spinRightE(0.4, 1300);
+            moveRightE(0.2, 600);
 
-        spinRightE(0.4, 1300);
-        moveRightE(0.2, 600);
-
-        /**
-        collectorUpDownS.setPosition(10);
-        Thread.sleep(1000);
-        Thread.sleep(500);
-        markerS.setPosition(.75);
-        Thread.sleep(1000);
-        markerS.setPosition(0);
-        collectorUpDownS.setPosition(0);
-        Thread.sleep(1000);
-        collectorUpDownS.setPosition(0.5);
-         */
+            /**
+            collectorUpDownS.setPosition(10);
+            Thread.sleep(1000);
+            Thread.sleep(500);
+            markerS.setPosition(.75);
+            Thread.sleep(1000);
+            markerS.setPosition(0);
+            collectorUpDownS.setPosition(0);
+            Thread.sleep(1000);
+            collectorUpDownS.setPosition(0.5);
+             */
 
         yellowVision.disable();
     }

@@ -29,10 +29,11 @@ public class GyroscopeTest extends LinearOpMode{
     private Orientation angles;
     private Acceleration gravity;
 
-    private float currentAngle;
+    private float correctedAngle;
+    private float yawcorrection;
     private boolean isGyro = false;
 
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException, NullPointerException {
         //configuration
         driveFLM = hardwareMap.dcMotor.get("driveFLM");
         driveFRM = hardwareMap.dcMotor.get("driveFRM");
@@ -56,25 +57,44 @@ public class GyroscopeTest extends LinearOpMode{
 
         composeTelemetry();
 
+        angles = GyroS.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity = GyroS.getGravity();
+
         waitForStart();
 
             GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
+            telemetry.addData("beginning Angle", angles.firstAngle);
             telemetry.update();
-
+            Thread.sleep(1500);
             spinLeftG(0.2, 90);
+            Thread.sleep(2000);
+            resetGyro();
+            telemetry.addData("beginning Angle", angles.firstAngle);
+            telemetry.update();
+            spinLeftG(0.15, 90);
 
     }
     //methods
     private void resetGyro()
     {
-        float yawcorrection = angles.firstAngle;
-        currentAngle = angles.firstAngle - yawcorrection;
-        if(currentAngle <= -180){
-            currentAngle = currentAngle + 360;
+        yawcorrection = angles.firstAngle;
+        correctedAngle = angles.firstAngle - yawcorrection;
+        if(correctedAngle <= -180){
+            correctedAngle = correctedAngle + 360;
         }
-        if (currentAngle > 180){
-            currentAngle = currentAngle - 360;
+        if (correctedAngle > 180){
+            correctedAngle = correctedAngle - 360;
+        }
+    }
+    private void getCorrectedAngle()
+    {
+        correctedAngle = angles.firstAngle - yawcorrection;
+        if(correctedAngle <= -180){
+            correctedAngle = correctedAngle + 360;
+        }
+        if (correctedAngle > 180){
+            correctedAngle = correctedAngle - 360;
         }
     }
     private void stopmotors(){
@@ -107,32 +127,41 @@ public class GyroscopeTest extends LinearOpMode{
         //the left side motors move forward
         spinLeft(-power);
     }
-    private void spinLeftG(double power, int yaw) throws NullPointerException
+    private void spinLeftG(double power, double yaw) throws NullPointerException, InterruptedException
     {
         isGyro = false;
-        while (isGyro = false) {
-            if (angles.firstAngle < yaw) {
+        telemetry.update();
+        while (!isGyro) {
+            telemetry.update();
+            getCorrectedAngle();
+            if (correctedAngle < yaw*10/11) {
                 spinLeft(power);
+                isGyro = false;
             }else{
                 isGyro = true;
             }
         }
         stopmotors();
-
-//        spinLeft(power);
-//        while (currentAngle < yaw) {
-//            telemetry.update();
-//        }
-//        stopmotors();
-//        setZPB();
+        telemetry.addData("angle", angles.firstAngle);
+        telemetry.update();
     }
     private void spinRightG(double power, int yaw)throws NullPointerException
     {
-        resetGyro();
-        spinRight(power);
-        while (currentAngle > yaw) {}
+        isGyro = false;
+        telemetry.update();
+        while (!isGyro) {
+            telemetry.update();
+            getCorrectedAngle();
+            if (correctedAngle > -yaw) {
+                spinLeft(power);
+                isGyro = false;
+            }else{
+                isGyro = true;
+            }
+        }
         stopmotors();
-        setZPB();
+        telemetry.addData("angle", angles.firstAngle);
+        telemetry.update();
     }
     private void composeTelemetry() {
 
@@ -143,11 +172,12 @@ public class GyroscopeTest extends LinearOpMode{
             // Acquiring the angles is relatively expensive; we don't want
             // to do that in each of the three items that need that info, as that's
             // three times the necessary expense.
-            angles  = GyroS.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = GyroS.getGravity();
+            angles = GyroS.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            gravity = GyroS.getGravity();
         }
         });
 
+        /*
         telemetry.addLine()
                 .addData("status", new Func<String>() {
                     @Override public String value() {
@@ -159,14 +189,15 @@ public class GyroscopeTest extends LinearOpMode{
                         return GyroS.getCalibrationStatus().toString();
                     }
                 });
+                */
 
         telemetry.addLine()
                 .addData("YAW", new Func<String>() {
                     @Override public String value() {
                         return formatAngle(angles.angleUnit, angles.firstAngle);
                     }
-                })
-                .addData("roll", new Func<String>() {
+                });
+                /*.addData("roll", new Func<String>() {
                     @Override public String value() {
                         return formatAngle(angles.angleUnit, angles.secondAngle);
                     }
@@ -176,8 +207,9 @@ public class GyroscopeTest extends LinearOpMode{
                         return formatAngle(angles.angleUnit, angles.thirdAngle);
                     }
                 });
+                */
 
-        telemetry.addLine()
+        /*telemetry.addLine()
                 .addData("grvty", new Func<String>() {
                     @Override public String value() {
                         return gravity.toString();
@@ -191,6 +223,7 @@ public class GyroscopeTest extends LinearOpMode{
                                         + gravity.zAccel*gravity.zAccel));
                     }
                 });
+                */
     }
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
