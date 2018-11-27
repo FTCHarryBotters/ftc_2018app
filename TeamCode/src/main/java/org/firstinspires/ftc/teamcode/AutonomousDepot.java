@@ -144,6 +144,11 @@ public class AutonomousDepot extends LinearOpMode {
             spinRightE(0.4, 450);
             driveBackwardE(0.4, 450);
 
+            //the following lines drop the marker
+            //the collector mechanism needs to move
+            //before the marker dropper can move
+
+
         //stop the vision system
         yellowVision.disable();
     }
