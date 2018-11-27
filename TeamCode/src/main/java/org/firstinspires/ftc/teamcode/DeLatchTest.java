@@ -37,6 +37,7 @@ public class DeLatchTest extends LinearOpMode{
         //what runs
 
         deLatchRobot();
+        Thread.sleep(2000);
 
     }
     //methods
@@ -89,20 +90,15 @@ public class DeLatchTest extends LinearOpMode{
         telemetry.update();
 
         delatchServoThread.start();
-        latchArmE(1, 600);
+        latchArm(1, 200);
 
         telemetry.addData("Position2", latchLeftM.getCurrentPosition());
         telemetry.update();
 
-        latchLeftM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        latchRightM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
         telemetry.addData("Position3", latchLeftM.getCurrentPosition());
         telemetry.update();
 
-        latchArmE(-0.5, 2000);
+        latchArmE(-0.5, 1500);
 
         telemetry.addData("Position4", latchLeftM.getCurrentPosition());
         telemetry.update();

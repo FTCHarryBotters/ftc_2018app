@@ -144,26 +144,6 @@ public class AutonomousDepot extends LinearOpMode {
             spinRightE(0.4, 450);
             driveBackwardE(0.4, 450);
 
-            //the following lines drop the marker
-            //the collector mechanism needs to move
-            //before the marker dropper can move
-            collectorUpDownS.setPosition(10);
-            Thread.sleep(1000);
-            Thread.sleep(500);
-            markerS.setPosition(.75);
-            Thread.sleep(1000);
-            markerS.setPosition(0);
-            collectorUpDownS.setPosition(0);
-            Thread.sleep(1000);
-            collectorUpDownS.setPosition(0.5);
-
-            driveForwardE(0.4, 450);
-            spinLeftE(0.4, 450);
-            moveRightE(0.4, 100);
-            driveForwardE(0.5, 2500);
-            collectorUpDownS.setPosition(10);
-            Thread.sleep(1000);
-
         //stop the vision system
         yellowVision.disable();
     }
