@@ -5,10 +5,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.opencv.core.MatOfPoint;
+
+import java.util.List;
+
 import static java.lang.Math.abs;
 
 @Autonomous(name = "AutoTestDelatch", group = "Sample")
 public class AutoTestDelatch extends LinearOpMode{
+
+    private YellowVision yellowVision = new YellowVision();
+    int i = 0;
+    int j = 0;
+    public static double power = .3;
+    boolean isGold = false;
+
     //declare
     private DcMotor driveFLM;
     private DcMotor driveFRM;
@@ -16,6 +28,8 @@ public class AutoTestDelatch extends LinearOpMode{
     private DcMotor driveBRM;
     private DcMotor latchLeftM;
     private DcMotor latchRightM;
+
+    private Servo samplingS;
     private Servo latchLeftS;
     private Servo latchRightS;
 
@@ -49,13 +63,33 @@ public class AutoTestDelatch extends LinearOpMode{
 
         latchLeftS       = hardwareMap.servo.get("latchLeftS");
         latchRightS      = hardwareMap.servo.get("latchRightS");
+        samplingS        = hardwareMap.servo.get("samplingS");
+
+        // can replace with ActivityViewDisplay.getInstance() for fullscreen
+        yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        yellowVision.setShowCountours(true);
+
+        // start the vision system
+        yellowVision.enable();
+
+
         waitForStart();
         //what runs
 
-        deLatchRobot();
-        Thread.sleep(2000);
+            deLatchRobot();
+            Thread.sleep(2000);
 
-        moveRightE(0.3, 200);
+            driveBackwardE(0.1, 50);
+            moveRightE(0.3, 200);
+            driveForwardE(0.4, 350);
+            spinRightE(0.4, 920);
+            driveBackwardE(0.4, 150);
+            moveLeftE(0.3, 100);
+            Thread.sleep(250);
+
+            SamplingSection();
+
+        yellowVision.disable();
     }
     //methods
     //methods for the latch arm
@@ -116,6 +150,8 @@ public class AutoTestDelatch extends LinearOpMode{
         telemetry.update();
 
         latchArmE(-0.5, 1500);
+        latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         telemetry.addData("Position4", latchLeftM.getCurrentPosition());
         telemetry.update();
@@ -132,6 +168,221 @@ public class AutoTestDelatch extends LinearOpMode{
             latchRightS.setPosition(0);
             this.interrupt();
         }
+    }
+    public void driveForwardE(double power, int ticks) throws InterruptedException
+    {
+        //Reset Encoders
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(ticks);
+        driveFRM.setTargetPosition(ticks);
+        driveBLM.setTargetPosition(ticks);
+        driveBRM.setTargetPosition(ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //driveForward
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+
+        //wait until target position
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        {
+
+        }
+
+        //stopMoving();
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void driveBackwardE(double power, int ticks) throws InterruptedException
+    {
+        //Reset Encoders
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(-ticks);
+        driveFRM.setTargetPosition(-ticks);
+        driveBLM.setTargetPosition(-ticks);
+        driveBRM.setTargetPosition(-ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //driveBackward
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+
+        //wait until target position
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        {
+
+        }
+
+        //stopMoving();
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void spinLeftE(double power, int ticks)
+    {
+        //Reset Encoders
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(-ticks);
+        driveFRM.setTargetPosition(ticks);
+        driveBLM.setTargetPosition(-ticks);
+        driveBRM.setTargetPosition(ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //spinLeft
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+
+        //wait until target position
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        {
+
+        }
+
+        //stopMoving();
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void spinRightE(double power, int ticks) throws InterruptedException
+    {
+        //Reset Encoders
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(ticks);
+        driveFRM.setTargetPosition(-ticks);
+        driveBLM.setTargetPosition(ticks);
+        driveBRM.setTargetPosition(-ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //spinRight
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+
+        //wait until target position
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        {
+
+        }
+
+        //stopMoving();
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void moveLeftE(double power, int ticks) throws InterruptedException
+    {
+        //Reset Encoders
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //set target position
+        driveFLM.setTargetPosition(-ticks);
+        driveFRM.setTargetPosition(ticks);
+        driveBLM.setTargetPosition(ticks);
+        driveBRM.setTargetPosition(-ticks);
+
+        //set ot RUN_TO_POSITION mode
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //moveLeft
+        driveFLM.setPower(power);
+        driveFRM.setPower(power);
+        driveBLM.setPower(power);
+        driveBRM.setPower(power);
+
+        //wait until target position
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy())
+        {
+
+        }
+
+        //stopMoving();
+        driveFLM.setPower(0);
+        driveFRM.setPower(0);
+        driveBLM.setPower(0);
+        driveBRM.setPower(0);
+
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveRightE(double power, int ticks) throws InterruptedException
     {
@@ -175,5 +426,58 @@ public class AutoTestDelatch extends LinearOpMode{
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void EnderCVContoursTest()
+    {
+        List<MatOfPoint> contours = yellowVision.getContours();
+        i = 0;
+        while (i < contours.size())
+        {
+            i++;
+        }
+        telemetry.addData("number of Countours i:", i);
+        telemetry.update();
+    }
+    public void detectingAndSamplingGold(int ticks) throws InterruptedException
+    {
+        samplingS.setPosition(0);
+        EnderCVContoursTest();
+        if (i != 0)
+        {
+            isGold = true;
+            samplingS.setPosition(.65);
+            driveForwardE(power, 100);
+            Thread.sleep(100);
+            driveBackwardE(power, 500);
+            samplingS.setPosition(0);
+            driveBackwardE(power, ticks-500);
+        }
+    }
+    public void SamplingSection() throws InterruptedException
+    {
+        while (!isGold && j < 2)
+        {
+            j++;
+            detectingAndSamplingGold(1400);
+
+            if (!isGold)
+            {
+                samplingS.setPosition(0);
+                driveForwardE(power, 650);
+                detectingAndSamplingGold(2000);
+
+                if (!isGold)
+                {
+                    samplingS.setPosition(0);
+                    driveBackwardE(power, 1300);
+                    detectingAndSamplingGold(800);
+
+                    if (!isGold)
+                    {
+                        driveForwardE(power, 650);
+                    }
+                }
+            }
+        }
     }
 }
