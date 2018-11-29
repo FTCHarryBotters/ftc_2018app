@@ -12,8 +12,8 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name = "AutoTestDelatch", group = "Sample")
-public class AutoTestDelatch extends LinearOpMode{
+@Autonomous(name = "AutonomousCrater1", group = "Sample")
+public class AutonomousCrater1 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
@@ -32,6 +32,7 @@ public class AutoTestDelatch extends LinearOpMode{
     private Servo samplingS;
     private Servo latchLeftS;
     private Servo latchRightS;
+    private Servo markerS;
 
     Thread  delatchServoThread;
 
@@ -61,33 +62,42 @@ public class AutoTestDelatch extends LinearOpMode{
 
         delatchServoThread = new DelatchServoThread();
 
-        latchLeftS       = hardwareMap.servo.get("latchLeftS");
-        latchRightS      = hardwareMap.servo.get("latchRightS");
-        samplingS        = hardwareMap.servo.get("samplingS");
+        latchLeftS  = hardwareMap.servo.get("latchLeftS");
+        latchRightS = hardwareMap.servo.get("latchRightS");
+        samplingS   = hardwareMap.servo.get("samplingS");
+        markerS     = hardwareMap.servo.get("markerS");
 
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
-
-        // start the vision system
         yellowVision.enable();
 
 
         waitForStart();
         //what runs
 
-            deLatchRobot();
-            Thread.sleep(2000);
+        deLatchRobot();
+        Thread.sleep(2000);
 
-            driveBackwardE(0.1, 50);
-            moveRightE(0.3, 200);
-            driveForwardE(0.4, 350);
-            spinRightE(0.4, 920);
-            driveBackwardE(0.4, 150);
-            moveLeftE(0.3, 100);
-            Thread.sleep(250);
+        driveBackwardE(0.1, 50);
+        moveRightE(0.3, 200);
+        driveForwardE(0.4, 350);
+        spinRightE(0.4, 900);
+        driveBackwardE(0.4, 150);
+        moveLeftE(0.3, 100);
+        Thread.sleep(250);
 
-            SamplingSection();
+        SamplingSection();
+
+        spinRightE(0.4, 1300);
+        moveRightE(0.2, 400);
+        driveForwardE(0.4, 1700);
+        moveLeftE(0.4, 200);
+        spinLeftE(0.4, 450);
+        driveForwardE(0.4, 450);
+
+        markerS.setPosition(0.75);
+        Thread.sleep(1000);
 
         yellowVision.disable();
     }
@@ -164,6 +174,10 @@ public class AutoTestDelatch extends LinearOpMode{
         @Override
         public void run()
         {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {e.printStackTrace();}
+
             latchLeftS.setPosition(1);
             latchRightS.setPosition(0);
             this.interrupt();
@@ -451,7 +465,7 @@ public class AutoTestDelatch extends LinearOpMode{
             driveBackwardE(power, 500);
             samplingS.setPosition(0);
             driveBackwardE(power, ticks-500);
-        }
+        }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException
     {

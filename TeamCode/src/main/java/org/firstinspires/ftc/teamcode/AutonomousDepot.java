@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.opencv.core.MatOfPoint;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Autonomous(name = "AutonomousDepot", group = "Sample")
+@Disabled
 public class AutonomousDepot extends LinearOpMode {
 
     private YellowVision yellowVision = new YellowVision();
@@ -107,8 +109,6 @@ public class AutonomousDepot extends LinearOpMode {
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
-
-        // start the vision system
         yellowVision.enable();
 
         //used for gyro
@@ -147,6 +147,7 @@ public class AutonomousDepot extends LinearOpMode {
             //the following lines drop the marker
             //the collector mechanism needs to move
             //before the marker dropper can move
+            //LIES
 
 
         //stop the vision system
