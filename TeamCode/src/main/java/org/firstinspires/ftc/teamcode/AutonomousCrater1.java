@@ -34,7 +34,7 @@ public class AutonomousCrater1 extends LinearOpMode{
     private Servo latchRightS;
     private Servo markerS;
 
-    Thread  delatchServoThread;
+    //Thread  delatchServoThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -60,7 +60,7 @@ public class AutonomousCrater1 extends LinearOpMode{
         latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        delatchServoThread = new DelatchServoThread();
+        //delatchServoThread = new DelatchServoThread();
 
         latchLeftS  = hardwareMap.servo.get("latchLeftS");
         latchRightS = hardwareMap.servo.get("latchRightS");
@@ -77,24 +77,24 @@ public class AutonomousCrater1 extends LinearOpMode{
         //what runs
 
         deLatchRobot();
-        Thread.sleep(2000);
+        Thread.sleep(1500);
 
         driveBackwardE(0.1, 50);
-        moveRightE(0.3, 200);
-        driveForwardE(0.4, 350);
+        moveRightE(0.5, 250);
+        driveForwardE(0.7, 350);
         spinRightE(0.4, 900);
-        driveBackwardE(0.4, 150);
-        moveLeftE(0.3, 100);
+        driveBackwardE(0.7, 200);
+        moveLeftE(0.7, 100);
         Thread.sleep(250);
 
         SamplingSection();
 
-        spinRightE(0.4, 1300);
-        moveRightE(0.2, 400);
-        driveForwardE(0.4, 1700);
-        moveLeftE(0.4, 200);
-        spinLeftE(0.4, 450);
-        driveForwardE(0.4, 450);
+        spinRightE(0.6, 1300);
+        moveRightE(0.7, 600);
+        driveForwardE(0.9, 2000);
+        moveLeftE(0.7, 200);
+        spinLeftE(0.5, 450);
+        driveForwardE(0.5, 250);
 
         markerS.setPosition(0.75);
         Thread.sleep(1000);
@@ -150,23 +150,26 @@ public class AutonomousCrater1 extends LinearOpMode{
         telemetry.addData("Position1", latchLeftM.getCurrentPosition());
         telemetry.update();
 
-        delatchServoThread.start();
-        latchArm(1, 200);
+        //delatchServoThread.start();
+        latchArm(1, Constants.UPTIME);
+        latchLeftS.setPosition(1);
+        latchRightS.setPosition(0);
 
         telemetry.addData("Position2", latchLeftM.getCurrentPosition());
         telemetry.update();
 
         telemetry.addData("Position3", latchLeftM.getCurrentPosition());
         telemetry.update();
+        // replace the value from constants like Constants.TICkSDOWN
 
-        latchArmE(-0.5, 1500);
+        latchArmE(-0.5,  Constants.TICKSDOWN);
         latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         telemetry.addData("Position4", latchLeftM.getCurrentPosition());
         telemetry.update();
     }
-    private class DelatchServoThread  extends Thread
+    /*private class DelatchServoThread  extends Thread
     {
         public DelatchServoThread (){
 
@@ -182,7 +185,7 @@ public class AutonomousCrater1 extends LinearOpMode{
             latchRightS.setPosition(0);
             this.interrupt();
         }
-    }
+    }*/
     public void driveForwardE(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -220,6 +223,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -264,6 +272,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -306,6 +319,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -350,6 +368,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -393,6 +416,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -435,6 +463,11 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

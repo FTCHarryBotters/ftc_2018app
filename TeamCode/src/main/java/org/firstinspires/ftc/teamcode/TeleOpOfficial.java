@@ -91,6 +91,8 @@ public class TeleOpOfficial extends LinearOpMode
 
         mineralDropping = new mineralDropping();
 
+        mineralDropperS.setPosition(0);
+
         waitForStart();
 
         while(opModeIsActive()) {
@@ -147,21 +149,21 @@ public class TeleOpOfficial extends LinearOpMode
             }
 
             //if KV pressed dpad up, the shoe moves to drop the minerals
-            //if he presses down, if moves back
-            //otherwise nothing happens
+            //if he presses down, it moves back
             if (gamepad1.dpad_up) {
-                mineralDropperS.setPosition(0.60);
+                //mineralDropperS.setPosition(mineralDropperS.getPosition()+0.01);
+                mineralDropperS.setPosition(0.8);
             }else{
                 if (gamepad1.dpad_down) {
-                    mineralDropperS.setPosition(0.40);
-                }else{
-                    mineralDropperS.setPosition(0.50);
+                    //mineralDropperS.setPosition(mineralDropperS.getPosition()-0.01);
+                    mineralDropperS.setPosition(0);
                 }
             }
 
+            //if KV presses x, then the parallel thread starts
+            //the parallel thread moves the mineral dropper back, waits for the minerals to drop,
+            //moves the mineraldropper back, and moves the slide down.
             if (gamepad1.x){
-                telemetry.addData("is thread", isTouchSensor);
-                telemetry.update();
                 mineralDropping.start();
             }
 
@@ -313,25 +315,17 @@ public class TeleOpOfficial extends LinearOpMode
 
 
             try {
-                mineralDropperS.setPosition(0.60);
-                telemetry.addData(" 1.mineralDropperS position", mineralDropperS.getPosition());
-                telemetry.update();
+                mineralDropperS.setPosition(0.80);
                 Thread.sleep(1000);
-                mineralDropperS.setPosition(0.5);
-                telemetry.addData("2.mineralDropperS position", mineralDropperS.getPosition());
-                telemetry.update();
+                mineralDropperS.setPosition(0.0);
+                Thread.sleep(250);
+                while(!isTouchSensor){
+                    linearUpDownM.setPower(-0.5);
+                }
+                linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                linearUpDownM.setPower(0);
 
-                Thread.sleep(1000);
-
-                mineralDropperS.setPosition(0.40);
-                telemetry.addData("3.mineralDropperS position", mineralDropperS.getPosition());
-                telemetry.update();
-                Thread.sleep(1000);
-                mineralDropperS.setPosition(0.5);
-                telemetry.addData("4.mineralDropperS position", mineralDropperS.getPosition());
-                telemetry.update();
-            } catch (InterruptedException e) {  telemetry.addData("mineralDropping InterruptedException", e.getMessage());}
-              catch (Exception e) { telemetry.addData("mineralDropping Exception thread", e.getMessage()); }
+            } catch (InterruptedException e) {} catch (Exception e) {}
 
 
 //            linearUpDownM.setPower(-0.5);
