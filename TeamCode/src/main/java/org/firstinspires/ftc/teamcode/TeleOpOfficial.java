@@ -43,7 +43,7 @@ public class TeleOpOfficial extends LinearOpMode
     private static double LATCHSPEEDFULL = 1;
     private static double LATCHSPEEDSXTH = 0.16;
 
-    Thread mineralDropping;
+    //Thread mineralDropping;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -90,7 +90,7 @@ public class TeleOpOfficial extends LinearOpMode
         //declare latchspeed variable. this is to change th speed of th latch arm
         double latchspeed = LATCHSPEEDSXTH;
 
-        mineralDropping = new mineralDropping();
+        //mineralDropping = new mineralDropping();
 
         mineralDropperS.setPosition(0);
 
@@ -110,7 +110,7 @@ public class TeleOpOfficial extends LinearOpMode
             //on whether or not the touch sensor is pressed.
             //if the touch sensor is pressed, the getState returns false and vice versa.
             //this is reversed, so the boolean reverses the value with ^=
-            isTouchSensor = linearUpDownN.getState();
+            isTouchSensor ^= linearUpDownN.getState();
 
             //lets Mike change the speed of the Latch arm.
             //He can use 1/6 speed to move the arm into the latch
@@ -162,9 +162,11 @@ public class TeleOpOfficial extends LinearOpMode
             //if KV presses x, then the parallel thread starts
             //the parallel thread moves the mineral dropper back, waits for the minerals to drop,
             //moves the mineraldropper back, and moves the slide down.
-            if (gamepad1.x){
+            /**********/
+            /*if (gamepad1.x){
                 mineralDropping.start();
             }
+            */
 
             //the most annoying code in this program
             //if M presses RB, the the up down slide will go up
@@ -296,6 +298,7 @@ public class TeleOpOfficial extends LinearOpMode
         driveBLM.setPower(0);
         driveBRM.setPower(0);
     }
+    /*
     public class mineralDropping extends Thread
     {
         public mineralDropping () {
@@ -340,4 +343,5 @@ public class TeleOpOfficial extends LinearOpMode
             }
         }
     }
+    */
 }
