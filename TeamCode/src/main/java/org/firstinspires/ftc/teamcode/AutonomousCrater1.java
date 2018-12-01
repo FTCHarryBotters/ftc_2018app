@@ -29,9 +29,9 @@ public class AutonomousCrater1 extends LinearOpMode{
     private DcMotor latchLeftM;
     private DcMotor latchRightM;
 
-    private Servo samplingS;
     private Servo latchLeftS;
     private Servo latchRightS;
+    private Servo samplingS;
     private Servo markerS;
 
     //Thread  delatchServoThread;
@@ -80,7 +80,7 @@ public class AutonomousCrater1 extends LinearOpMode{
         Thread.sleep(1500);
 
         driveBackwardE(0.1, 50);
-        moveRightE(0.5, 250);
+        moveRightE(0.6, 250);
         driveForwardE(0.7, 350);
         spinRightE(0.4, 900);
         driveBackwardE(0.7, 200);
@@ -96,12 +96,13 @@ public class AutonomousCrater1 extends LinearOpMode{
         spinLeftE(0.5, 450);
         driveForwardE(0.5, 250);
 
-        markerS.setPosition(0.75);
+        markerS.setPosition(0.6);
         Thread.sleep(1000);
 
         driveBackwardE(0.5, 250);
         spinRightE(0.5, 450);
         moveRightE(0.7, 200);
+        driveBackwardE(0.9, 3000);
 
         yellowVision.disable();
     }
@@ -499,9 +500,9 @@ public class AutonomousCrater1 extends LinearOpMode{
             samplingS.setPosition(.65);
             driveForwardE(power, 100);
             Thread.sleep(100);
-            driveBackwardE(power, 500);
+            driveBackwardE(power, 400);
             samplingS.setPosition(0);
-            driveBackwardE(power, ticks-500);
+            driveBackwardE(power, ticks-400);
         }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException

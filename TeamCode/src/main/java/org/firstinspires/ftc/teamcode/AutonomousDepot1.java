@@ -29,10 +29,11 @@ public class AutonomousDepot1 extends LinearOpMode{
     private DcMotor latchLeftM;
     private DcMotor latchRightM;
 
-    private Servo samplingS;
     private Servo latchLeftS;
     private Servo latchRightS;
+    private Servo samplingS;
     private Servo markerS;
+    private Servo collectorUpDownS;
 
     //Thread  delatchServoThread;
 
@@ -62,10 +63,12 @@ public class AutonomousDepot1 extends LinearOpMode{
 
         //delatchServoThread = new DelatchServoThread();
 
-        latchLeftS  = hardwareMap.servo.get("latchLeftS");
-        latchRightS = hardwareMap.servo.get("latchRightS");
-        samplingS   = hardwareMap.servo.get("samplingS");
-        markerS     = hardwareMap.servo.get("markerS");
+        latchLeftS       = hardwareMap.servo.get("latchLeftS");
+        latchRightS      = hardwareMap.servo.get("latchRightS");
+        samplingS        = hardwareMap.servo.get("samplingS");
+        markerS          = hardwareMap.servo.get("markerS");
+        collectorUpDownS = hardwareMap.servo.get("collectorUpDownS");
+
 
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
@@ -80,7 +83,7 @@ public class AutonomousDepot1 extends LinearOpMode{
             Thread.sleep(1500);
 
             driveBackwardE(0.1, 50);
-            moveRightE(0.5, 250);
+            moveRightE(0.6, 250);
             driveForwardE(0.7, 350);
             spinRightE(0.4, 900);
             driveBackwardE(0.7, 200);
@@ -96,12 +99,16 @@ public class AutonomousDepot1 extends LinearOpMode{
             spinRightE(0.5, 450);
             driveBackwardE(0.5, 250);
 
-            markerS.setPosition(0.75);
+            markerS.setPosition(0.6);
             Thread.sleep(1000);
 
             driveForwardE(0.5, 250);
             spinLeftE(0.5, 450);
             moveRightE(0.7, 200);
+            driveForwardE(0.9, 2500);
+            collectorUpDownS.setPosition(0.60);
+            Thread.sleep(500);
+
 
         yellowVision.disable();
     }
@@ -499,9 +506,9 @@ public class AutonomousDepot1 extends LinearOpMode{
             samplingS.setPosition(.65);
             driveForwardE(power, 100);
             Thread.sleep(100);
-            driveBackwardE(power, 500);
+            driveBackwardE(power, 400);
             samplingS.setPosition(0);
-            driveBackwardE(power, ticks-500);
+            driveBackwardE(power, ticks-400);
         }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException

@@ -41,7 +41,7 @@ public class TeleOpOfficial extends LinearOpMode
 
     //Declare latch speed statics
     private static double LATCHSPEEDFULL = 1;
-    private static double LATCHSPEEDSXTH = 0.16;
+    private static double LATCHSPEEDQRTR = 0.25;
 
     //Thread mineralDropping;
 
@@ -88,7 +88,7 @@ public class TeleOpOfficial extends LinearOpMode
         linearUpDownN.setMode(DigitalChannel.Mode.INPUT);
 
         //declare latchspeed variable. this is to change th speed of th latch arm
-        double latchspeed = LATCHSPEEDSXTH;
+        double latchspeed = LATCHSPEEDQRTR;
 
         //mineralDropping = new mineralDropping();
 
@@ -119,9 +119,11 @@ public class TeleOpOfficial extends LinearOpMode
                 latchspeed = LATCHSPEEDFULL;
             }else{
                 if (gamepad2.dpad_down){
-                    latchspeed = LATCHSPEEDSXTH;
+                    latchspeed = LATCHSPEEDQRTR;
                 }
             }
+
+
 
             //these six lines let KV move the Robot.
             //the left side of the robot, FLM and BLM are controlled w/ the left stick
@@ -159,6 +161,17 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
+            //if KV presses A and B, the latch servos move
+            //B delatches, and A latches
+            if (gamepad1.b) {
+                latchLeftS.setPosition(1);
+                latchRightS.setPosition(0);
+            }else{
+                if (gamepad1.a) {
+                    latchLeftS.setPosition(0);
+                    latchRightS.setPosition(1);
+                }
+            }
             //if KV presses x, then the parallel thread starts
             //the parallel thread moves the mineral dropper back, waits for the minerals to drop,
             //moves the mineraldropper back, and moves the slide down.
@@ -200,18 +213,6 @@ public class TeleOpOfficial extends LinearOpMode
             //the collector mechanism goes up
             //if M moves his right stick up, and vice versa
             collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
-
-            //if michael presses the triggers, the latch servos move
-            //LT delatches, and RT latches
-            if (gamepad2.left_trigger > 0.1) {
-                latchLeftS.setPosition(1);
-                latchRightS.setPosition(0);
-            }else{
-                if (gamepad2.right_trigger > 0.1) {
-                    latchLeftS.setPosition(0);
-                    latchRightS.setPosition(1);
-                }
-            }
 
             //A, B, and Y move the collector flaps
             //A sucks in mminerals;

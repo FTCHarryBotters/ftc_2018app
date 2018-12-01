@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "KKMineralDropTest", group = "KK")
+@Disabled
 public class KKMineralDropTest extends LinearOpMode{
     //declare
 
