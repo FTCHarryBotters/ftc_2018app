@@ -99,6 +99,10 @@ public class AutonomousCrater1 extends LinearOpMode{
         markerS.setPosition(0.75);
         Thread.sleep(1000);
 
+        driveBackwardE(0.5, 250);
+        spinRightE(0.5, 450);
+        moveRightE(0.7, 200);
+
         yellowVision.disable();
     }
     //methods

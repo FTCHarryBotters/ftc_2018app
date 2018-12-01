@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -109,7 +110,7 @@ public class TeleOpOfficial extends LinearOpMode
             //on whether or not the touch sensor is pressed.
             //if the touch sensor is pressed, the getState returns false and vice versa.
             //this is reversed, so the boolean reverses the value with ^=
-            isTouchSensor ^= linearUpDownN.getState();
+            isTouchSensor = linearUpDownN.getState();
 
             //lets Mike change the speed of the Latch arm.
             //He can use 1/6 speed to move the arm into the latch
@@ -122,7 +123,6 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
-
             //these six lines let KV move the Robot.
             //the left side of the robot, FLM and BLM are controlled w/ the left stick
             //the right side of the robot, FRM and BRM are controlled w/ the right stick
@@ -133,7 +133,6 @@ public class TeleOpOfficial extends LinearOpMode
             driveBRM.setPower(-gamepad1.right_stick_y);
             moveLeft(gamepad1.left_trigger);
             moveRight(gamepad1.right_trigger);
-
 
             //if KV presses RB, the slide goes forward
             //if he presses LB, the slide goes back
@@ -218,10 +217,10 @@ public class TeleOpOfficial extends LinearOpMode
             //and B stops the flaps
             if (gamepad2.y) {
                 collectorS.setPosition(1);
-            }else{
+            }else {
                 if (gamepad2.a) {
                     collectorS.setPosition(0);
-                }else{
+                } else {
                     if (gamepad2.b) {
                         collectorS.setPosition(0.5);
                     }
@@ -297,40 +296,48 @@ public class TeleOpOfficial extends LinearOpMode
         driveBLM.setPower(0);
         driveBRM.setPower(0);
     }
-    private class mineralDropping extends Thread
+    public class mineralDropping extends Thread
     {
         public mineralDropping () {
 
         }
+        public void bringDownMineralDropper(double power){
+            while(linearUpDownN.getState() == true){
+                linearUpDownM.setPower(power * -1);
+            }
+            linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            linearUpDownM.setPower(0);
+        }
+        public void dropMinerals() throws InterruptedException{
 
+            mineralDropperS.setPosition(0.80);
+
+            telemetry.addData("Direction: ", mineralDropperS.getDirection());
+            telemetry.update();
+
+            telemetry.addData("Position: ", mineralDropperS.getPosition());
+            telemetry.update();
+            Thread.sleep(2000);
+
+
+            mineralDropperS.setPosition(0);
+
+            telemetry.addData("Direction: ", mineralDropperS.getDirection());
+            telemetry.update();
+
+            telemetry.addData("Position: ", mineralDropperS.getPosition());
+            telemetry.update();
+            Thread.sleep(250);
+        }
         @Override
-        public void run()
-        {
-//            linearUpDownM.setPower(0.5);
-//            try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
-//            linearUpDownM.setPower(0);
-//            linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            telemetry.addData("mineralDropping thread", "Thread started");
-
-
+        public void run() {
             try {
-                mineralDropperS.setPosition(0.80);
-                Thread.sleep(1000);
-                mineralDropperS.setPosition(0.0);
-                Thread.sleep(250);
-                while(!isTouchSensor){
-                    linearUpDownM.setPower(-0.5);
-                }
-                linearUpDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                linearUpDownM.setPower(0);
+                dropMinerals();
+                bringDownMineralDropper(0.5);
 
-            } catch (InterruptedException e) {} catch (Exception e) {}
-
-
-//            linearUpDownM.setPower(-0.5);
-//            try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
-//            linearUpDownM.setPower(0);
+            } catch (InterruptedException e) {
+            } catch (Exception e) {
+            }
         }
     }
 }
