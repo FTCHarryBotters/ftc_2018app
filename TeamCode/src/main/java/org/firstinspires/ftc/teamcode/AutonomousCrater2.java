@@ -12,8 +12,8 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name = "AutonomousDepot1", group = "Sample")
-public class AutonomousDepot1 extends LinearOpMode{
+@Autonomous(name = "AutonomousCrater2", group = "Sample")
+public class AutonomousCrater2 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
@@ -33,7 +33,6 @@ public class AutonomousDepot1 extends LinearOpMode{
     private Servo latchRightS;
     private Servo samplingS;
     private Servo markerS;
-    private Servo collectorUpDownS;
 
     //Thread  delatchServoThread;
 
@@ -63,12 +62,10 @@ public class AutonomousDepot1 extends LinearOpMode{
 
         //delatchServoThread = new DelatchServoThread();
 
-        latchLeftS       = hardwareMap.servo.get("latchLeftS");
-        latchRightS      = hardwareMap.servo.get("latchRightS");
-        samplingS        = hardwareMap.servo.get("samplingS");
-        markerS          = hardwareMap.servo.get("markerS");
-        collectorUpDownS = hardwareMap.servo.get("collectorUpDownS");
-
+        latchLeftS  = hardwareMap.servo.get("latchLeftS");
+        latchRightS = hardwareMap.servo.get("latchRightS");
+        samplingS   = hardwareMap.servo.get("samplingS");
+        markerS     = hardwareMap.servo.get("markerS");
 
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
@@ -79,35 +76,33 @@ public class AutonomousDepot1 extends LinearOpMode{
         waitForStart();
         //what runs
 
-            deLatchRobot();
-            Thread.sleep(1500);
+        deLatchRobot();
+        Thread.sleep(1500);
 
-            driveBackwardE(0.1, 50);
-            moveRightE(0.6, 250);
-            driveForwardE(0.7, 350);
-            spinRightE(0.4, 900);
-            driveBackwardE(0.7, 200);
-            moveLeftE(0.7, 100);
-            Thread.sleep(250);
+        driveBackwardE(0.1, 50);
+        moveRightE(0.6, 250);
+        driveForwardE(0.7, 350);
+        spinRightE(0.4, 900);
+        driveBackwardE(0.7, 200);
+        moveLeftE(0.7, 100);
+        Thread.sleep(250);
 
-            SamplingSection();
+        SamplingSection();
 
-            spinRightE(0.6, 1320);
-            moveRightE(0.7, 450);
-            driveBackwardE(0.9, 1600);
-            moveLeftE(0.7, 200);
-            spinRightE(0.5, 450);
-            driveBackwardE(0.5, 250);
+        spinRightE(0.6, 1300);
+        moveRightE(0.7, 600);
+        driveForwardE(0.9, 2100);
+        moveLeftE(0.7, 300);
+        spinLeftE(0.5, 450);
+        driveForwardE(0.5, 250);
 
-            markerS.setPosition(0.6);
-            Thread.sleep(1000);
+        markerS.setPosition(0.6);
+        Thread.sleep(1000);
 
-            driveForwardE(0.5, 250);
-            spinLeftE(0.5, 450);
-            moveRightE(0.7, 200);
-            driveForwardE(0.9, 2600);
-            collectorUpDownS.setPosition(1);
-
+        driveBackwardE(0.5, 250);
+        spinRightE(0.5, 450);
+        moveRightE(0.7, 200);
+        driveBackwardE(0.9, 2222);
 
         yellowVision.disable();
     }
@@ -140,6 +135,7 @@ public class AutonomousDepot1 extends LinearOpMode{
         {
             telemetry.addData("power", latchLeftM.getPower());
             telemetry.update();
+
         }
         //stop motors. why o why.
         // the latchE works *fundamentally* different to the driveE.

@@ -41,7 +41,7 @@ public class TeleOpOfficial extends LinearOpMode
 
     //Declare latch speed statics
     private static double LATCHSPEEDFULL = 1;
-    private static double LATCHSPEEDQRTR = 0.25;
+    private static double LATCHSPEEDTHRD = 0.41;
 
     //Thread mineralDropping;
 
@@ -88,11 +88,9 @@ public class TeleOpOfficial extends LinearOpMode
         linearUpDownN.setMode(DigitalChannel.Mode.INPUT);
 
         //declare latchspeed variable. this is to change th speed of th latch arm
-        double latchspeed = LATCHSPEEDQRTR;
+        double latchspeed = LATCHSPEEDTHRD;
 
         //mineralDropping = new mineralDropping();
-
-        mineralDropperS.setPosition(0);
 
         waitForStart();
 
@@ -119,7 +117,7 @@ public class TeleOpOfficial extends LinearOpMode
                 latchspeed = LATCHSPEEDFULL;
             }else{
                 if (gamepad2.dpad_down){
-                    latchspeed = LATCHSPEEDQRTR;
+                    latchspeed = LATCHSPEEDTHRD;
                 }
             }
 

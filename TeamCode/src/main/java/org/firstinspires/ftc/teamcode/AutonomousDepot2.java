@@ -12,13 +12,14 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name = "AutonomousDepot1", group = "Sample")
-public class AutonomousDepot1 extends LinearOpMode{
+@Autonomous(name = "AutonomousDepot2", group = "Sample")
+public class AutonomousDepot2 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
     int j = 0;
-    public static double power = .3;
+    int k = 1;
+    public static double SAMPLINGPOWER = .3;
     boolean isGold = false;
 
     //declare
@@ -34,8 +35,6 @@ public class AutonomousDepot1 extends LinearOpMode{
     private Servo samplingS;
     private Servo markerS;
     private Servo collectorUpDownS;
-
-    //Thread  delatchServoThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -180,23 +179,6 @@ public class AutonomousDepot1 extends LinearOpMode{
         telemetry.addData("Position4", latchLeftM.getCurrentPosition());
         telemetry.update();
     }
-    /*private class DelatchServoThread  extends Thread
-    {
-        public DelatchServoThread (){
-
-        }
-        @Override
-        public void run()
-        {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {e.printStackTrace();}
-
-            latchLeftS.setPosition(1);
-            latchRightS.setPosition(0);
-            this.interrupt();
-        }
-    }*/
     public void driveForwardE(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -502,13 +484,23 @@ public class AutonomousDepot1 extends LinearOpMode{
         EnderCVContoursTest();
         if (i != 0)
         {
-            isGold = true;
-            samplingS.setPosition(.65);
-            driveForwardE(power, 100);
-            Thread.sleep(100);
-            driveBackwardE(power, 400);
-            samplingS.setPosition(0);
-            driveBackwardE(power, ticks-400);
+            if (k != 0) {
+                isGold = true;
+                samplingS.setPosition(.65);
+                driveForwardE(SAMPLINGPOWER, 100);
+                Thread.sleep(100);
+                driveBackwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks-400);
+            }else{
+                isGold = true;
+                samplingS.setPosition(0.65);
+                driveBackwardE(SAMPLINGPOWER, 100);
+                Thread.sleep(100);
+                driveForwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks+400);
+            }
         }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException
@@ -516,23 +508,26 @@ public class AutonomousDepot1 extends LinearOpMode{
         while (!isGold && j < 2)
         {
             j++;
+            k = 1;
             detectingAndSamplingGold(1400);
 
             if (!isGold)
             {
                 samplingS.setPosition(0);
-                driveForwardE(power, 650);
+                driveForwardE(SAMPLINGPOWER, 650);
+                k = 2;
                 detectingAndSamplingGold(2000);
 
                 if (!isGold)
                 {
                     samplingS.setPosition(0);
-                    driveBackwardE(power, 1300);
+                    driveBackwardE(SAMPLINGPOWER, 1300);
+                    k = 0;
                     detectingAndSamplingGold(800);
 
                     if (!isGold)
                     {
-                        driveForwardE(power, 650);
+                        driveForwardE(SAMPLINGPOWER, 650);
                     }
                 }
             }

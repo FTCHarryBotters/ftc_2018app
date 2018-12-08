@@ -91,8 +91,8 @@ public class AutonomousCrater1 extends LinearOpMode{
 
         spinRightE(0.6, 1300);
         moveRightE(0.7, 600);
-        driveForwardE(0.9, 2000);
-        moveLeftE(0.7, 200);
+        driveForwardE(0.9, 2100);
+        moveLeftE(0.7, 300);
         spinLeftE(0.5, 450);
         driveForwardE(0.5, 250);
 
@@ -102,7 +102,7 @@ public class AutonomousCrater1 extends LinearOpMode{
         driveBackwardE(0.5, 250);
         spinRightE(0.5, 450);
         moveRightE(0.7, 200);
-        driveBackwardE(0.9, 3000);
+        driveBackwardE(0.9, 2222);
 
         yellowVision.disable();
     }
@@ -133,6 +133,8 @@ public class AutonomousCrater1 extends LinearOpMode{
         //wait
         while (abs(latchLeftM.getCurrentPosition()) < abs(ticks) && abs(latchRightM.getCurrentPosition()) < abs(ticks))
         {
+            telemetry.addData("power", latchLeftM.getPower());
+            telemetry.update();
 
         }
         //stop motors. why o why.
