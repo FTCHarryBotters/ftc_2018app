@@ -40,8 +40,8 @@ public class TeleOpOfficial extends LinearOpMode
     private boolean isTouchSensor;
 
     //Declare latch speed statics
-    private static double LATCHSPEEDFULL = 1;
-    private static double LATCHSPEEDTHRD = 0.41;
+    private static double LATCHSPEEDFAST = 1;
+    private static double LATCHSPEEDSLOW = 0.41;
 
     //Thread mineralDropping;
 
@@ -88,7 +88,7 @@ public class TeleOpOfficial extends LinearOpMode
         linearUpDownN.setMode(DigitalChannel.Mode.INPUT);
 
         //declare latchspeed variable. this is to change th speed of th latch arm
-        double latchspeed = LATCHSPEEDTHRD;
+        double latchspeed = LATCHSPEEDSLOW;
 
         //mineralDropping = new mineralDropping();
 
@@ -114,10 +114,10 @@ public class TeleOpOfficial extends LinearOpMode
             //He can use 1/6 speed to move the arm into the latch
             //and he can use full speed to actually lift the robot
             if (gamepad2.dpad_up){
-                latchspeed = LATCHSPEEDFULL;
+                latchspeed = LATCHSPEEDFAST;
             }else{
                 if (gamepad2.dpad_down){
-                    latchspeed = LATCHSPEEDTHRD;
+                    latchspeed = LATCHSPEEDSLOW;
                 }
             }
 
@@ -213,7 +213,7 @@ public class TeleOpOfficial extends LinearOpMode
             collectorUpDownS.setPosition((gamepad2.right_stick_y+1)*0.5);
 
             //A, B, and Y move the collector flaps
-            //A sucks in mminerals;
+            //A sucks in minerals;
             //Y pushes out minerals, if we get 3 or the wrong type
             //and B stops the flaps
             if (gamepad2.y) {

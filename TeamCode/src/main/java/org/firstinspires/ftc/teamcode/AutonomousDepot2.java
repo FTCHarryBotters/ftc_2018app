@@ -93,20 +93,17 @@ public class AutonomousDepot2 extends LinearOpMode{
 
             spinRightE(0.6, 1320);
             moveRightE(0.7, 450);
-            driveBackwardE(0.9, 1600);
+            driveBackwardE(0.7, 1350);
             moveLeftE(0.7, 200);
-            spinRightE(0.5, 450);
-            driveBackwardE(0.5, 250);
+            spinRightE(0.5, 900);
 
             markerS.setPosition(0.6);
             Thread.sleep(1000);
 
-            driveForwardE(0.5, 250);
-            spinLeftE(0.5, 450);
+            spinLeftE(0.5, 900);
             moveRightE(0.7, 200);
             driveForwardE(0.9, 2600);
             collectorUpDownS.setPosition(1);
-
 
         yellowVision.disable();
     }
@@ -486,20 +483,20 @@ public class AutonomousDepot2 extends LinearOpMode{
         {
             if (k != 0) {
                 isGold = true;
-                samplingS.setPosition(.65);
                 driveForwardE(SAMPLINGPOWER, 100);
+                samplingS.setPosition(.65);
                 Thread.sleep(100);
                 driveBackwardE(SAMPLINGPOWER, 400);
                 samplingS.setPosition(0);
                 driveBackwardE(SAMPLINGPOWER, ticks-400);
             }else{
                 isGold = true;
+                driveBackwardE(SAMPLINGPOWER, 400);
                 samplingS.setPosition(0.65);
-                driveBackwardE(SAMPLINGPOWER, 100);
                 Thread.sleep(100);
                 driveForwardE(SAMPLINGPOWER, 400);
                 samplingS.setPosition(0);
-                driveBackwardE(SAMPLINGPOWER, ticks+400);
+                driveBackwardE(SAMPLINGPOWER, ticks);
             }
         }else{i = 0;}
     }

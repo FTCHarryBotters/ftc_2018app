@@ -18,7 +18,8 @@ public class AutonomousCrater2 extends LinearOpMode{
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
     int j = 0;
-    public static double power = .3;
+    int k = 1;
+    public static double SAMPLINGPOWER = .3;
     boolean isGold = false;
 
     //declare
@@ -498,13 +499,23 @@ public class AutonomousCrater2 extends LinearOpMode{
         EnderCVContoursTest();
         if (i != 0)
         {
-            isGold = true;
-            samplingS.setPosition(.65);
-            driveForwardE(power, 100);
-            Thread.sleep(100);
-            driveBackwardE(power, 400);
-            samplingS.setPosition(0);
-            driveBackwardE(power, ticks-400);
+            if (k != 0) {
+                isGold = true;
+                driveForwardE(SAMPLINGPOWER, 100);
+                samplingS.setPosition(.65);
+                Thread.sleep(100);
+                driveBackwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks-400);
+            }else{
+                isGold = true;
+                driveBackwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0.65);
+                Thread.sleep(100);
+                driveForwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks);
+            }
         }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException
@@ -512,23 +523,26 @@ public class AutonomousCrater2 extends LinearOpMode{
         while (!isGold && j < 2)
         {
             j++;
+            k = 1;
             detectingAndSamplingGold(1400);
 
             if (!isGold)
             {
                 samplingS.setPosition(0);
-                driveForwardE(power, 650);
+                driveForwardE(SAMPLINGPOWER, 650);
+                k = 2;
                 detectingAndSamplingGold(2000);
 
                 if (!isGold)
                 {
                     samplingS.setPosition(0);
-                    driveBackwardE(power, 1300);
+                    driveBackwardE(SAMPLINGPOWER, 1300);
+                    k = 0;
                     detectingAndSamplingGold(800);
 
                     if (!isGold)
                     {
-                        driveForwardE(power, 650);
+                        driveForwardE(SAMPLINGPOWER, 650);
                     }
                 }
             }
