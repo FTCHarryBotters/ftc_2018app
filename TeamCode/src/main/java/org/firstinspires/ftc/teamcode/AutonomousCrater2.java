@@ -85,15 +85,15 @@ public class AutonomousCrater2 extends LinearOpMode{
         driveForwardE(0.7, 350);
         spinRightE(0.4, 900);
         driveBackwardE(0.7, 300);
-        moveLeftE(0.7, 100);
+        moveLeftE(0.7, 150);
         Thread.sleep(250);
 
         SamplingSection();
 
-        spinRightE(0.6, 1300);
+        spinRightE(0.6, 1320);
         moveRightE(0.7, 600);
-        driveForwardE(0.9, 1700);
-        moveLeftE(0.7, 300);
+        driveForwardE(0.9, 1500);
+        moveLeftE(0.7, 200);
         spinLeftE(0.5, 900);
 
         markerS.setPosition(0.6);
