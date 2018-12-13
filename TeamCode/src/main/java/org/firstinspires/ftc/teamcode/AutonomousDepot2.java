@@ -91,7 +91,7 @@ public class AutonomousDepot2 extends LinearOpMode{
 
             SamplingSection();
 
-            spinRightE(0.6, 1320);
+            spinRightE(0.6, 1300);
             moveRightE(0.7, 450);
             driveBackwardE(0.7, 1450);
             moveLeftE(0.7, 200);
@@ -102,7 +102,7 @@ public class AutonomousDepot2 extends LinearOpMode{
 
             spinLeftE(0.5, 900);
             moveRightE(0.7, 200);
-            driveForwardE(0.9, 2600);
+            driveForwardE(0.8, 2600);
             collectorUpDownS.setPosition(1);
             Thread.sleep(1000);
 

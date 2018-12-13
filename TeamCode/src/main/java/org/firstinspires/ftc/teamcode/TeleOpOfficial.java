@@ -121,8 +121,6 @@ public class TeleOpOfficial extends LinearOpMode
                 }
             }
 
-
-
             //these six lines let KV move the Robot.
             //the left side of the robot, FLM and BLM are controlled w/ the left stick
             //the right side of the robot, FRM and BRM are controlled w/ the right stick

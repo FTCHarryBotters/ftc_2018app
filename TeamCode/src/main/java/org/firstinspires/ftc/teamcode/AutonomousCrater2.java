@@ -92,16 +92,16 @@ public class AutonomousCrater2 extends LinearOpMode{
 
         spinRightE(0.6, 1320);
         moveRightE(0.7, 600);
-        driveForwardE(0.9, 1500);
-        moveLeftE(0.7, 200);
+        driveForwardE(0.9, 1800);
+        moveLeftE(0.7, 500);
         spinLeftE(0.5, 900);
 
         markerS.setPosition(0.6);
         Thread.sleep(1000);
 
-        spinRightE(0.5, 900);
-        moveRightE(0.7, 200);
-        driveBackwardE(0.9, 2222);
+        spinRightE(0.5, 920);
+        moveRightE(0.7, 500);
+        driveBackwardE(0.8, 2222);
 
         yellowVision.disable();
     }
@@ -522,21 +522,21 @@ public class AutonomousCrater2 extends LinearOpMode{
         {
             j++;
             k = 1;
-            detectingAndSamplingGold(1400);
+            detectingAndSamplingGold(1200);
 
             if (!isGold)
             {
                 samplingS.setPosition(0);
                 driveForwardE(SAMPLINGPOWER, 650);
                 k = 2;
-                detectingAndSamplingGold(2000);
+                detectingAndSamplingGold(1800);
 
                 if (!isGold)
                 {
                     samplingS.setPosition(0);
                     driveBackwardE(SAMPLINGPOWER, 1300);
                     k = 0;
-                    detectingAndSamplingGold(800);
+                    detectingAndSamplingGold(600);
 
                     if (!isGold)
                     {
