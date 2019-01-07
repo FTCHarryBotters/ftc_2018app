@@ -77,31 +77,35 @@ public class AutonomousCrater2 extends LinearOpMode{
         waitForStart();
         //what runs
 
-        deLatchRobot();
-        Thread.sleep(1500);
+            deLatchRobot();
+            Thread.sleep(1500);
 
-        driveBackwardE(0.1, 50);
-        moveRightE(0.6, 250);
-        driveForwardE(0.7, 350);
-        spinRightE(0.4, 900);
-        driveBackwardE(0.7, 300);
-        moveLeftE(0.7, 150);
-        Thread.sleep(250);
+            //moving from hook onto the lander
+            //to the phone in front of the central mineral
+            driveBackwardE(0.1, 50);
+            driveForwardE(0.1, 15);
+            moveRightE(0.6, 300);
+            driveForwardE(0.7, 350);
+            moveLeftE(0.6, 50);
+            spinRightE(0.4, 900);
+            driveBackwardE(0.7, 250);
+            moveLeftE(0.7, 150);
+            Thread.sleep(250);
 
-        SamplingSection();
+            SamplingSection();
 
-        spinRightE(0.6, 1320);
-        moveRightE(0.7, 600);
-        driveForwardE(0.9, 1800);
-        moveLeftE(0.7, 500);
-        spinLeftE(0.5, 900);
+            spinRightE(0.6, 1320);
+            moveRightE(0.7, 600);
+            driveForwardE(0.9, 1800);
+            moveLeftE(0.7, 500);
+            spinLeftE(0.5, 900);
 
-        markerS.setPosition(0.6);
-        Thread.sleep(1000);
+            markerS.setPosition(0.6);
+            Thread.sleep(1000);
 
-        spinRightE(0.5, 920);
-        moveRightE(0.7, 500);
-        driveBackwardE(0.8, 2222);
+            spinRightE(0.5, 920);
+            moveRightE(0.7, 500);
+            driveBackwardE(0.8, 2222);
 
         yellowVision.disable();
     }

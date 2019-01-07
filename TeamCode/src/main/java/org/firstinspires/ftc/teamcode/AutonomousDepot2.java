@@ -81,11 +81,15 @@ public class AutonomousDepot2 extends LinearOpMode{
             deLatchRobot();
             Thread.sleep(1500);
 
+            //moving from hook onto the lander
+            //to the phone in front of the central mineral
             driveBackwardE(0.1, 50);
-            moveRightE(0.6, 250);
+            driveForwardE(0.1, 15);
+            moveRightE(0.6, 300);
             driveForwardE(0.7, 350);
+            moveLeftE(0.6, 50);
             spinRightE(0.4, 900);
-            driveBackwardE(0.7, 300);
+            driveBackwardE(0.7, 250);
             moveLeftE(0.7, 150);
             Thread.sleep(250);
 
