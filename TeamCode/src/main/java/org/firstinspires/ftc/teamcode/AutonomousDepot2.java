@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 @Autonomous(name = "AutonomousDepot2", group = "Sample")
+@Disabled
 public class AutonomousDepot2 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();

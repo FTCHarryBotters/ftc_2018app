@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 
 @TeleOp(name = "TeleOpOfficial", group = "Sample")
+@Disabled
 public class TeleOpOfficial extends LinearOpMode
 {
     //declare motors
