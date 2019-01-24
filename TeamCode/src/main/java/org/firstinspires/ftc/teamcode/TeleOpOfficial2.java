@@ -4,16 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 
 @TeleOp(name = "TeleOpOfficial2", group = "Sample")
-public class TeleOpOfficial2 extends LinearOpMode
-{
+public class TeleOpOfficial2 extends LinearOpMode {
+
     //declare motors
     private DcMotor driveFLM;
     private DcMotor driveFRM;
@@ -29,6 +24,8 @@ public class TeleOpOfficial2 extends LinearOpMode
     private Servo collectorUpDownLeftS;
     private Servo collectorUpDownRightS;
     private Servo mineralDropperS;
+    private Servo phoneS;
+    private Servo markerS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,7 +44,6 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
         latchM.setDirection(DcMotor.Direction.FORWARD);
-        //unsure which way since hardware unbuilt
         upDownM.setDirection(DcMotor.Direction.REVERSE);
         inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
         inOutRightM.setDirection(DcMotor.Direction.REVERSE);
@@ -56,6 +52,8 @@ public class TeleOpOfficial2 extends LinearOpMode
         collectorUpDownLeftS  = hardwareMap.servo.get("CollectorUpDownLeftS");
         collectorUpDownRightS = hardwareMap.servo.get("CollectorUpDownRightS");
         mineralDropperS       = hardwareMap.servo.get("MineralDropperS");
+        phoneS                = hardwareMap.servo.get("phoneS");
+        markerS               = hardwareMap.servo.get("markerS");
 
         waitForStart();
 
@@ -94,7 +92,7 @@ public class TeleOpOfficial2 extends LinearOpMode
             }else {
                 if (gamepad2.a) {
                     collectorS.setPosition(0);
-                } else {
+                }else {
                     if (gamepad2.b) {
                         collectorS.setPosition(0.5);
                     }
@@ -136,8 +134,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         }
     }
     //methods for moving.
-    public void driveForward(double power)
-    {
+    public void driveForward(double power) {
         //this function is to move forward.
         //all motors move forward
         driveFLM.setPower(power);
@@ -145,8 +142,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(power);
         driveBRM.setPower(power);
     }
-    public void driveBackward(double power)
-    {
+    public void driveBackward(double power) {
         //this function is to move backward
         //all motors move back
         driveFLM.setPower(-power);
@@ -154,8 +150,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(-power);
         driveBRM.setPower(-power);
     }
-    public void spinLeft(double power)
-    {
+    public void spinLeft(double power) {
         //spins the robot left
         //the left side moves backward &
         //the right side motors move forward
@@ -164,8 +159,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
     }
-    public void spinRight(double power)
-    {
+    public void spinRight(double power) {
         //spins the robot right
         //the right side moves backward &
         //the left side motors move forward
@@ -174,8 +168,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
     }
-    public void moveLeft(double power)
-    {
+    public void moveLeft(double power) {
         //slides the robot left
         //the front left and back right motors move backward
         //while the front right and back left motors move forward
@@ -184,8 +177,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
     }
-    public void moveRight(double power)
-    {
+    public void moveRight(double power) {
         //slides the robot right
         //the front right and back left motors move backward
         //while the front left and back right motors move forward
@@ -194,8 +186,7 @@ public class TeleOpOfficial2 extends LinearOpMode
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
     }
-    public void stopMoving()
-    {
+    public void stopMoving() {
         driveFLM.setPower(0);
         driveFRM.setPower(0);
         driveBLM.setPower(0);
