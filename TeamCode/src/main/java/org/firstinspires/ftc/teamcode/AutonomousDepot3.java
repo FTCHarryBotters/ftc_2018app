@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 
-@Autonomous(name = "AutonomousCrater3", group = "Sample")
+@Autonomous(name = "AutonomousDepot3", group = "Sample")
 public class AutonomousDepot3 extends LinearOpMode {
 
     //declare

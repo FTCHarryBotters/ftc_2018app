@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOpOfficial2", group = "Sample")
@@ -19,13 +20,14 @@ public class TeleOpOfficial2 extends LinearOpMode {
     private DcMotor inOutLeftM;
     private DcMotor inOutRightM;
 
+    double drivespeed = 1;
+
     //declare swervos
     private Servo collectorS;
     private Servo collectorUpDownLeftS;
     private Servo collectorUpDownRightS;
     private Servo mineralDropperS;
-    private Servo phoneS;
-    private Servo markerS;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -44,25 +46,31 @@ public class TeleOpOfficial2 extends LinearOpMode {
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
         latchM.setDirection(DcMotor.Direction.FORWARD);
-        upDownM.setDirection(DcMotor.Direction.REVERSE);
-        inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
-        inOutRightM.setDirection(DcMotor.Direction.REVERSE);
+        upDownM.setDirection(DcMotor.Direction.FORWARD);
+        inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
+        inOutRightM.setDirection(DcMotor.Direction.FORWARD);
 
         collectorS            = hardwareMap.servo.get("CollectorS");
         collectorUpDownLeftS  = hardwareMap.servo.get("CollectorUpDownLeftS");
         collectorUpDownRightS = hardwareMap.servo.get("CollectorUpDownRightS");
         mineralDropperS       = hardwareMap.servo.get("MineralDropperS");
-        phoneS                = hardwareMap.servo.get("phoneS");
-        markerS               = hardwareMap.servo.get("markerS");
 
         waitForStart();
 
         while(opModeIsActive()) {
 
-            driveFLM.setPower(-gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x);
-            driveFRM.setPower(-gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x);
-            driveBLM.setPower(-gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x);
-            driveBRM.setPower(-gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x);
+            if (gamepad1.x) {
+                drivespeed = 0.75;
+            }else {
+                if (gamepad1.y) {
+                    drivespeed = 1;
+                }
+            }
+
+            driveFLM.setPower((-gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x)*drivespeed);
+            driveFRM.setPower((-gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x)*drivespeed);
+            driveBLM.setPower((-gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x)*drivespeed);
+            driveBRM.setPower((-gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x)*drivespeed);
 
             if (gamepad1.right_trigger>0.1) {
                 latchM.setPower(1);
@@ -82,8 +90,12 @@ public class TeleOpOfficial2 extends LinearOpMode {
                     inOutLeftM.setPower(-0.5);
                     inOutRightM.setPower(-0.5);
                 }else {
+                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     inOutLeftM.setPower(0);
                     inOutRightM.setPower(0);
+                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 }
             }
 
