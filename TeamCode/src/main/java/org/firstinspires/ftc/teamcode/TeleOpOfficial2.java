@@ -18,28 +18,27 @@ public class TeleOpOfficial2 extends LinearOpMode {
     private DcMotor latchM;
     private DcMotor upDownM;
     private DcMotor inOutLeftM;
-    private DcMotor inOutRightM;
+    private DcMotor inOutRghtM;
 
     double drivespeed = 1;
 
     //declare swervos
     private Servo collectorS;
     private Servo collectorUpDownLeftS;
-    private Servo collectorUpDownRightS;
+    private Servo collectorUpDownRghtS;
     private Servo mineralDropperS;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        driveFLM    = hardwareMap.dcMotor.get("driveFLM");
-        driveFRM    = hardwareMap.dcMotor.get("driveFRM");
-        driveBLM    = hardwareMap.dcMotor.get("driveBLM");
-        driveBRM    = hardwareMap.dcMotor.get("driveBRM");
-        latchM      = hardwareMap.dcMotor.get("latchM");
-        upDownM     = hardwareMap.dcMotor.get("upDownM");
-        inOutLeftM  = hardwareMap.dcMotor.get("inOutLeftM");
-        inOutRightM = hardwareMap.dcMotor.get("inOutRightM");
+        driveFLM   = hardwareMap.dcMotor.get("driveFLM");
+        driveFRM   = hardwareMap.dcMotor.get("driveFRM");
+        driveBLM   = hardwareMap.dcMotor.get("driveBLM");
+        driveBRM   = hardwareMap.dcMotor.get("driveBRM");
+        latchM     = hardwareMap.dcMotor.get("latchM");
+        upDownM    = hardwareMap.dcMotor.get("upDownM");
+        inOutLeftM = hardwareMap.dcMotor.get("inOutLeftM");
+        inOutRghtM = hardwareMap.dcMotor.get("inOutRightM");
 
         driveFLM.setDirection(DcMotor.Direction.FORWARD);
         driveFRM.setDirection(DcMotor.Direction.REVERSE);
@@ -48,19 +47,19 @@ public class TeleOpOfficial2 extends LinearOpMode {
         latchM.setDirection(DcMotor.Direction.FORWARD);
         upDownM.setDirection(DcMotor.Direction.FORWARD);
         inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
-        inOutRightM.setDirection(DcMotor.Direction.FORWARD);
+        inOutRghtM.setDirection(DcMotor.Direction.FORWARD);
 
-        collectorS            = hardwareMap.servo.get("CollectorS");
-        collectorUpDownLeftS  = hardwareMap.servo.get("CollectorUpDownLeftS");
-        collectorUpDownRightS = hardwareMap.servo.get("CollectorUpDownRightS");
-        mineralDropperS       = hardwareMap.servo.get("MineralDropperS");
+        collectorS           = hardwareMap.servo.get("collectorS");
+        collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
+        collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
+        mineralDropperS      = hardwareMap.servo.get("mineralDropperS");
 
         waitForStart();
 
         while(opModeIsActive()) {
 
             if (gamepad1.x) {
-                drivespeed = 0.75;
+                drivespeed = 0.25;
             }else {
                 if (gamepad1.y) {
                     drivespeed = 1;
@@ -84,18 +83,18 @@ public class TeleOpOfficial2 extends LinearOpMode {
 
             if (gamepad1.right_bumper) {
                 inOutLeftM.setPower(0.5);
-                inOutRightM.setPower(0.5);
+                inOutRghtM.setPower(0.5);
             }else {
                 if (gamepad1.left_bumper) {
                     inOutLeftM.setPower(-0.5);
-                    inOutRightM.setPower(-0.5);
+                    inOutRghtM.setPower(-0.5);
                 }else {
                     inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    inOutRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     inOutLeftM.setPower(0);
-                    inOutRightM.setPower(0);
+                    inOutRghtM.setPower(0);
                     inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    inOutRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 }
             }
 
@@ -111,24 +110,13 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.dpad_up) {
-                collectorUpDownLeftS .setPosition(collectorUpDownLeftS .getPosition()-0.1);
-                collectorUpDownRightS.setPosition(collectorUpDownRightS.getPosition()+0.1);
-            }else {
-                if (gamepad2.dpad_down) {
-                    collectorUpDownLeftS .setPosition(collectorUpDownLeftS .getPosition()+0.1);
-                    collectorUpDownRightS.setPosition(collectorUpDownRightS.getPosition()-0.1);
-                }else {
-                    collectorUpDownLeftS .setPosition(collectorUpDownLeftS .getPosition());
-                    collectorUpDownRightS.setPosition(collectorUpDownRightS.getPosition());
-                }
-            }
-
             if (gamepad2.right_trigger>0.5) {
-                mineralDropperS.setPosition(0);
+                mineralDropperS.setPosition(0.25);
             }else {
-                if (gamepad2.left_trigger>0.5) {
+                if (gamepad2.left_trigger > 0.5) {
                     mineralDropperS.setPosition(0.75);
+                } else {
+                    mineralDropperS.setPosition(0.50000000);
                 }
             }
 
@@ -139,6 +127,19 @@ public class TeleOpOfficial2 extends LinearOpMode {
                     upDownM.setPower(-0.5);
                 }else {
                     upDownM.setPower(0);
+                }
+            }
+
+            if (gamepad2.dpad_up) {
+                collectorUpDownLeftS.setPosition(0);
+                collectorUpDownRghtS.setPosition(1);
+            }else {
+                if (gamepad2.dpad_down) {
+                collectorUpDownLeftS.setPosition(1);
+                collectorUpDownRghtS.setPosition(0);
+                }else {
+                    collectorUpDownLeftS.setPosition(0.5);
+                    collectorUpDownRghtS.setPosition(0.5);
                 }
             }
 
@@ -171,7 +172,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
         driveBLM.setPower(-power);
         driveBRM.setPower(power);
     }
-    public void spinRight(double power) {
+    public void spinRght(double power) {
         //spins the robot right
         //the right side moves backward &
         //the left side motors move forward
@@ -189,7 +190,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
         driveBLM.setPower(power);
         driveBRM.setPower(-power);
     }
-    public void moveRight(double power) {
+    public void moveRght(double power) {
         //slides the robot right
         //the front right and back left motors move backward
         //while the front left and back right motors move forward

@@ -19,12 +19,12 @@ public class AutonomousDepot3 extends LinearOpMode {
     private DcMotor latchM;
     private DcMotor upDownM;
     private DcMotor inOutLeftM;
-    private DcMotor inOutRightM;
+    private DcMotor inOutRghtM;
 
     //declare swervos
     private Servo collectorS;
     private Servo collectorUpDownLeftS;
-    private Servo collectorUpDownRightS;
+    private Servo collectorUpDownRghtS;
     private Servo mineralDropperS;
     private Servo phoneS;
     private Servo markerS;
@@ -33,14 +33,14 @@ public class AutonomousDepot3 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //configure
-        driveFLM    = hardwareMap.dcMotor.get("driveFLM");
-        driveFRM    = hardwareMap.dcMotor.get("driveFRM");
-        driveBLM    = hardwareMap.dcMotor.get("driveBLM");
-        driveBRM    = hardwareMap.dcMotor.get("driveBRM");
-        latchM      = hardwareMap.dcMotor.get("latchM");
-        upDownM     = hardwareMap.dcMotor.get("upDownM");
-        inOutLeftM  = hardwareMap.dcMotor.get("inOutLeftM");
-        inOutRightM = hardwareMap.dcMotor.get("inOutRightM");
+        driveFLM   = hardwareMap.dcMotor.get("driveFLM");
+        driveFRM   = hardwareMap.dcMotor.get("driveFRM");
+        driveBLM   = hardwareMap.dcMotor.get("driveBLM");
+        driveBRM   = hardwareMap.dcMotor.get("driveBRM");
+        latchM     = hardwareMap.dcMotor.get("latchM");
+        upDownM    = hardwareMap.dcMotor.get("upDownM");
+        inOutLeftM = hardwareMap.dcMotor.get("inOutLeftM");
+        inOutRghtM = hardwareMap.dcMotor.get("inOutRightM");
 
         driveFLM.setDirection(DcMotor.Direction.FORWARD);
         driveFRM.setDirection(DcMotor.Direction.REVERSE);
@@ -49,27 +49,25 @@ public class AutonomousDepot3 extends LinearOpMode {
         latchM.setDirection(DcMotor.Direction.FORWARD);
         upDownM.setDirection(DcMotor.Direction.REVERSE);
         inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
-        inOutRightM.setDirection(DcMotor.Direction.REVERSE);
+        inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        collectorS            = hardwareMap.servo.get("CollectorS");
-        collectorUpDownLeftS  = hardwareMap.servo.get("CollectorUpDownLeftS");
-        collectorUpDownRightS = hardwareMap.servo.get("CollectorUpDownRightS");
-        mineralDropperS       = hardwareMap.servo.get("MineralDropperS");
-        phoneS                = hardwareMap.servo.get("phoneS");
-        markerS               = hardwareMap.servo.get("markerS");
+        collectorS           = hardwareMap.servo.get("CollectorS");
+        collectorUpDownLeftS = hardwareMap.servo.get("CollectorUpDownLeftS");
+        collectorUpDownRghtS = hardwareMap.servo.get("CollectorUpDownRightS");
+        mineralDropperS      = hardwareMap.servo.get("MineralDropperS");
+        phoneS               = hardwareMap.servo.get("phoneS");
+        markerS              = hardwareMap.servo.get("markerS");
 
         waitForStart();
         //what runs
 
-            //kv put the auton code here
-            //use the methods
-            //kv if you're doing auton don't do sampling
-            //it's too much work
+            latchM.setPower(-1);
+            Thread.sleep(7000);
 
     }
     public void driveForwardE(double power, int ticks) throws InterruptedException {
@@ -207,7 +205,7 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void spinRightE(double power, int ticks) throws InterruptedException {
+    public void spinRghtE(double power, int ticks) throws InterruptedException {
 
         //Reset Encoders
         driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -227,7 +225,7 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //spinRight
+        //spinRght
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
@@ -297,7 +295,7 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void moveRightE(double power, int ticks) throws InterruptedException {
+    public void moveRghtE(double power, int ticks) throws InterruptedException {
 
         //Reset Encoders
         driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -317,7 +315,7 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //moveRight
+        //moveRght
         driveFLM.setPower(power);
         driveFRM.setPower(power);
         driveBLM.setPower(power);
