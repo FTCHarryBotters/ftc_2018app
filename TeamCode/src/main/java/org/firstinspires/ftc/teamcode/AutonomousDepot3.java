@@ -7,9 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.opencv.core.MatOfPoint;
+
+import java.util.List;
 
 @Autonomous(name = "AutonomousDepot3", group = "Sample")
 public class AutonomousDepot3 extends LinearOpMode {
+
+    private YellowVision yellowVision = new YellowVision();
+    int contourNumber = 0;
+    int samplingHowMany = 0;
+    boolean isGold = false;
 
     //declare
     private DcMotor driveFLM;
@@ -47,28 +55,36 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
         latchM.setDirection(DcMotor.Direction.FORWARD);
-        upDownM.setDirection(DcMotor.Direction.REVERSE);
-        inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
-        inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
+        upDownM.setDirection(DcMotor.Direction.FORWARD);
+        inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
+        inOutRghtM.setDirection(DcMotor.Direction.FORWARD);
+
+        collectorS           = hardwareMap.servo.get("collectorS");
+        collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
+        collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
+        mineralDropperS      = hardwareMap.servo.get("mineralDropperS");
+        markerS              = hardwareMap.servo.get("markerS");
+        phoneS               = hardwareMap.servo.get("phoneS");
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        collectorS           = hardwareMap.servo.get("CollectorS");
-        collectorUpDownLeftS = hardwareMap.servo.get("CollectorUpDownLeftS");
-        collectorUpDownRghtS = hardwareMap.servo.get("CollectorUpDownRightS");
-        mineralDropperS      = hardwareMap.servo.get("MineralDropperS");
-        phoneS               = hardwareMap.servo.get("phoneS");
-        markerS              = hardwareMap.servo.get("markerS");
+        yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        yellowVision.setShowCountours(true);
+        yellowVision.enable();
 
         waitForStart();
-        //what runs
+        if (true) {
+            //what runs
+            //26,300 ticks for the latch motor
+            delatch();
+            moveLeftE(0.3, 500);
+            //sampling();
 
-            latchM.setPower(-1);
-            Thread.sleep(7000);
-
+            yellowVision.disable();
+        }
     }
     public void driveForwardE(double power, int ticks) throws InterruptedException {
 
@@ -339,5 +355,54 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void delatch() {
+        latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchM.setTargetPosition(26300);
+        latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        latchM.setPower(1);
+        while (latchM.isBusy()) {}
+        latchM.setPower(0);
+        latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void EnderCVContoursTest() {
+        List<MatOfPoint> contours = yellowVision.getContours();
+        contourNumber = 0;
+        contourNumber = contours.size();
+        telemetry.addData("number of Countours i:", contourNumber);
+        telemetry.update();
+    }
+    public void detectingAndSamplingGold(int distance) throws InterruptedException {
+        phoneS.setPosition(0.5);
+        Thread.sleep(500);
+        EnderCVContoursTest();
+        if (contourNumber != 0) {
+            //gold found
+            isGold = true;
+            phoneS.setPosition(0.25);
+            Thread.sleep(100);
+            moveLeftE(0.4, 500);
+            phoneS.setPosition(0.90);
+            moveRghtE(0.4, 350);
+            driveBackwardE(0.6, distance);
+        }
+    }
+    public void sampling() throws InterruptedException {
+        while (!isGold && samplingHowMany < 2) {
+            samplingHowMany++;
+            detectingAndSamplingGold(1400);
+            if (!isGold) {
+                driveForwardE(0.6, 600);
+                detectingAndSamplingGold(2000);
+                if (!isGold) {
+                    driveBackwardE(0.6, 1250);
+                    detectingAndSamplingGold(800);
+                    if (!isGold) {
+                        driveForwardE(0.6, 650);
+                    }
+                }
+            }
+        }
     }
 }

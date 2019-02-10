@@ -76,7 +76,6 @@ public class AutonomousDepot2 extends LinearOpMode{
         yellowVision.setShowCountours(true);
         yellowVision.enable();
 
-
         waitForStart();
         //what runs
 

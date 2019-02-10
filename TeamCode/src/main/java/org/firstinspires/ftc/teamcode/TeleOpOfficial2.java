@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOpOfficial2", group = "Sample")
 public class TeleOpOfficial2 extends LinearOpMode {
+
+    boolean sendDropperUp = false;
+    boolean bringDropperDown = false;
+    int testCounter = 0;
+
 
     //declare motors
     private DcMotor driveFLM;
@@ -27,6 +30,8 @@ public class TeleOpOfficial2 extends LinearOpMode {
     private Servo collectorUpDownLeftS;
     private Servo collectorUpDownRghtS;
     private Servo mineralDropperS;
+    private Servo markerS;
+    private Servo phoneS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -53,10 +58,18 @@ public class TeleOpOfficial2 extends LinearOpMode {
         collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
         collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
         mineralDropperS      = hardwareMap.servo.get("mineralDropperS");
+        markerS              = hardwareMap.servo.get("markerS");
+        phoneS               = hardwareMap.servo.get("phoneS");
 
         waitForStart();
 
+        latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while(opModeIsActive()) {
+
+            markerS.setPosition(0);
+            phoneS.setPosition(0.85);
 
             if (gamepad1.x) {
                 drivespeed = 0.25;
@@ -82,12 +95,12 @@ public class TeleOpOfficial2 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                inOutLeftM.setPower(0.5);
-                inOutRghtM.setPower(0.5);
+                inOutLeftM.setPower(1);
+                inOutRghtM.setPower(1);
             }else {
                 if (gamepad1.left_bumper) {
-                    inOutLeftM.setPower(-0.5);
-                    inOutRghtM.setPower(-0.5);
+                    inOutLeftM.setPower(-1);
+                    inOutRghtM.setPower(-1);
                 }else {
                     inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,10 +111,10 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.y) {
+            if (gamepad2.a) {
                 collectorS.setPosition(1);
             }else {
-                if (gamepad2.a) {
+                if (gamepad2.y) {
                     collectorS.setPosition(0);
                 }else {
                     if (gamepad2.b) {
@@ -110,38 +123,67 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.right_trigger>0.5) {
-                mineralDropperS.setPosition(0.25);
+            if (gamepad2.right_trigger>0.1) {
+                mineralDropperS.setPosition(0);
             }else {
-                if (gamepad2.left_trigger > 0.5) {
+                if (gamepad2.left_trigger>0.1) {
                     mineralDropperS.setPosition(0.75);
                 } else {
-                    mineralDropperS.setPosition(0.50000000);
+                    mineralDropperS.setPosition(0.5);
                 }
             }
 
             if (gamepad2.right_bumper) {
-                upDownM.setPower(0.5);
+                upDownM.setPower(1);
             }else {
                 if (gamepad2.left_bumper) {
-                    upDownM.setPower(-0.5);
+                    upDownM.setPower(-1);
                 }else {
                     upDownM.setPower(0);
                 }
             }
 
-            if (gamepad2.dpad_up) {
-                collectorUpDownLeftS.setPosition(0);
-                collectorUpDownRghtS.setPosition(1);
-            }else {
-                if (gamepad2.dpad_down) {
-                collectorUpDownLeftS.setPosition(1);
-                collectorUpDownRghtS.setPosition(0);
-                }else {
-                    collectorUpDownLeftS.setPosition(0.5);
-                    collectorUpDownRghtS.setPosition(0.5);
-                }
+            collectorUpDownLeftS.setPosition(((+gamepad2.left_stick_y)*0.5)+0.5);
+            collectorUpDownRghtS.setPosition(((-gamepad2.left_stick_y)*0.5)+0.5);
+
+            if (gamepad2.x) {
+                sendDropperUp = true;
+                testCounter = 0;
             }
+            if (sendDropperUp) {
+                if (testCounter <= 350) {
+                    upDownM.setPower(0.5);
+                }else {
+                    upDownM.setPower(0);
+                    sendDropperUp = false;
+                }
+                testCounter++;
+            }
+
+            if (gamepad2.dpad_up) {
+                mineralDropperS.setPosition(0);
+                Thread.sleep(750);
+                mineralDropperS.setPosition(0.5);
+                Thread.sleep(750);
+                mineralDropperS.setPosition(1);
+                Thread.sleep(750);
+                mineralDropperS.setPosition(0.5);
+                testCounter = 0;
+                bringDropperDown = true;
+            }
+
+            if (bringDropperDown) {
+                if (testCounter <= 350) {
+                    upDownM.setPower(-0.5);
+                }else {
+                    upDownM.setPower(0);
+                    bringDropperDown = false;
+                }
+                testCounter++;
+            }
+
+            telemetry.addData("a", latchM.getCurrentPosition());
+            telemetry.update();
 
             idle();
         }
@@ -204,5 +246,10 @@ public class TeleOpOfficial2 extends LinearOpMode {
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+    }
+    public void dropMinerals()throws InterruptedException{
+        upDownM.setPower(0.5);
+        Thread.sleep(1000);
+        upDownM.setPower(0);
     }
 }

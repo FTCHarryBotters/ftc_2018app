@@ -52,21 +52,21 @@ public class AutonomousCrater3 extends LinearOpMode {
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
         latchM.setDirection(DcMotor.Direction.FORWARD);
-        upDownM.setDirection(DcMotor.Direction.REVERSE);
-        inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
-        inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
+        upDownM.setDirection(DcMotor.Direction.FORWARD);
+        inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
+        inOutRghtM.setDirection(DcMotor.Direction.FORWARD);
+
+        collectorS           = hardwareMap.servo.get("collectorS");
+        collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
+        collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
+        mineralDropperS      = hardwareMap.servo.get("mineralDropperS");
+        markerS              = hardwareMap.servo.get("markerS");
+        phoneS               = hardwareMap.servo.get("phoneS");
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        collectorS           = hardwareMap.servo.get("CollectorS");
-        collectorUpDownLeftS = hardwareMap.servo.get("CollectorUpDownLeftS");
-        collectorUpDownRghtS = hardwareMap.servo.get("CollectorUpDownRightS");
-        mineralDropperS      = hardwareMap.servo.get("MineralDropperS");
-        phoneS               = hardwareMap.servo.get("phoneS");
-        markerS              = hardwareMap.servo.get("markerS");
 
         waitForStart();
         //what runs
