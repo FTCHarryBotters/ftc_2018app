@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.obsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -7,20 +7,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.firstinspires.ftc.teamcode.YellowVision;
+import org.firstinspires.ftc.teamcode.obsolete.Constants;
 import org.opencv.core.MatOfPoint;
 
 import java.util.List;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name = "AutonomousDepot1", group = "Sample")
+@Autonomous(name = "AutonomousDepot2", group = "Sample")
 @Disabled
-public class AutonomousDepot1 extends LinearOpMode{
+public class AutonomousDepot2 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
     int j = 0;
-    public static double power = .3;
+    int k = 1;
+    public static double SAMPLINGPOWER = .3;
     boolean isGold = false;
 
     //declare
@@ -36,8 +39,6 @@ public class AutonomousDepot1 extends LinearOpMode{
     private Servo samplingS;
     private Servo markerS;
     private Servo collectorUpDownS;
-
-    //Thread  delatchServoThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -77,39 +78,40 @@ public class AutonomousDepot1 extends LinearOpMode{
         yellowVision.setShowCountours(true);
         yellowVision.enable();
 
-
         waitForStart();
         //what runs
 
             deLatchRobot();
             Thread.sleep(1500);
 
+            //moving from hook onto the lander
+            //to the phone in front of the central mineral
             driveBackwardE(0.1, 50);
-            moveRightE(0.6, 250);
+            driveForwardE(0.1, 15);
+            moveRightE(0.6, 300);
             driveForwardE(0.7, 350);
+            moveLeftE(0.6, 50);
             spinRightE(0.4, 900);
-            driveBackwardE(0.7, 200);
-            moveLeftE(0.7, 100);
+            driveBackwardE(0.7, 250);
+            moveLeftE(0.7, 150);
             Thread.sleep(250);
 
             SamplingSection();
 
-            spinRightE(0.6, 1320);
+            spinRightE(0.6, 1300);
             moveRightE(0.7, 450);
-            driveBackwardE(0.9, 1600);
+            driveBackwardE(0.7, 1450);
             moveLeftE(0.7, 200);
-            spinRightE(0.5, 450);
-            driveBackwardE(0.5, 250);
+            spinRightE(0.5, 900);
 
             markerS.setPosition(0.6);
             Thread.sleep(1000);
 
-            driveForwardE(0.5, 250);
-            spinLeftE(0.5, 450);
+            spinLeftE(0.5, 900);
             moveRightE(0.7, 200);
-            driveForwardE(0.9, 2600);
+            driveForwardE(0.8, 2600);
             collectorUpDownS.setPosition(1);
-
+            Thread.sleep(1000);
 
         yellowVision.disable();
     }
@@ -182,23 +184,6 @@ public class AutonomousDepot1 extends LinearOpMode{
         telemetry.addData("Position4", latchLeftM.getCurrentPosition());
         telemetry.update();
     }
-    /*private class DelatchServoThread  extends Thread
-    {
-        public DelatchServoThread (){
-
-        }
-        @Override
-        public void run()
-        {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {e.printStackTrace();}
-
-            latchLeftS.setPosition(1);
-            latchRightS.setPosition(0);
-            this.interrupt();
-        }
-    }*/
     public void driveForwardE(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -504,13 +489,23 @@ public class AutonomousDepot1 extends LinearOpMode{
         EnderCVContoursTest();
         if (i != 0)
         {
-            isGold = true;
-            samplingS.setPosition(.65);
-            driveForwardE(power, 100);
-            Thread.sleep(100);
-            driveBackwardE(power, 400);
-            samplingS.setPosition(0);
-            driveBackwardE(power, ticks-400);
+            if (k != 0) {
+                isGold = true;
+                driveForwardE(SAMPLINGPOWER, 100);
+                samplingS.setPosition(.65);
+                Thread.sleep(100);
+                driveBackwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks-400);
+            }else{
+                isGold = true;
+                driveBackwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0.65);
+                Thread.sleep(100);
+                driveForwardE(SAMPLINGPOWER, 400);
+                samplingS.setPosition(0);
+                driveBackwardE(SAMPLINGPOWER, ticks);
+            }
         }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException
@@ -518,23 +513,26 @@ public class AutonomousDepot1 extends LinearOpMode{
         while (!isGold && j < 2)
         {
             j++;
+            k = 1;
             detectingAndSamplingGold(1400);
 
             if (!isGold)
             {
                 samplingS.setPosition(0);
-                driveForwardE(power, 650);
+                driveForwardE(SAMPLINGPOWER, 650);
+                k = 2;
                 detectingAndSamplingGold(2000);
 
                 if (!isGold)
                 {
                     samplingS.setPosition(0);
-                    driveBackwardE(power, 1300);
+                    driveBackwardE(SAMPLINGPOWER, 1300);
+                    k = 0;
                     detectingAndSamplingGold(800);
 
                     if (!isGold)
                     {
-                        driveForwardE(power, 650);
+                        driveForwardE(SAMPLINGPOWER, 650);
                     }
                 }
             }

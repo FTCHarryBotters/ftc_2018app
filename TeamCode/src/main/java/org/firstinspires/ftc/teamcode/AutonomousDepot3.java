@@ -4,9 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.MatOfPoint;
 
 import java.util.List;
@@ -15,9 +17,10 @@ import java.util.List;
 public class AutonomousDepot3 extends LinearOpMode {
 
     private YellowVision yellowVision = new YellowVision();
-    int contourNumber = 0;
-    int samplingHowMany = 0;
-    boolean isGold = false;
+    private int contourNumber = 0;
+    private int samplingHowMany = 0;
+    private boolean isGold = false;
+    private boolean shortPath = true;
 
     //declare
     private DcMotor driveFLM;
@@ -36,6 +39,8 @@ public class AutonomousDepot3 extends LinearOpMode {
     private Servo mineralDropperS;
     private Servo phoneS;
     private Servo markerS;
+
+    private DistanceSensor distanceS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -71,19 +76,70 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        distanceS = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
         yellowVision.enable();
 
         waitForStart();
-        if (true) {
-            //what runs
-            //26,300 ticks for the latch motor
-            delatch();
-            moveLeftE(0.3, 500);
-            //sampling();
+        if (true!=false&&false!=true&&true&&!false&&!!!!!!!false) {
 
-            yellowVision.disable();
+            delatch();
+            moveLeftE(0.9, 100);
+            driveForwardE(0.9, 600);
+            phoneS.setPosition(0.4);
+            spinRghtE(0.9, 900);
+            driveBackwardE(0.9, 75);
+
+            sampling();
+            if (shortPath) {
+                phoneS.setPosition(0.2);
+                moveLeftE(0.9, 1500);
+                phoneS.setPosition(0.9);
+                spinRghtE(0.9, 1600);
+
+                markerS.setPosition(0.75);
+                Thread.sleep(1000);
+                markerS.setPosition(0);
+
+                moveRghtE(0.9, 100);
+                driveForwardE(0.9, 500);
+                spinLeftE(0.9, 350);
+                moveRghtE(0.9, 300);
+                driveForwardE(0.9, 2800);
+
+                collectorUpDownLeftS.setPosition(0);
+                collectorUpDownRghtS.setPosition(1);
+                Thread.sleep(800);
+            } else {
+                spinLeftE(0.9, 450);
+                double Dist = distanceS.getDistance(DistanceUnit.CM);
+                while (Dist>24) {
+                    Dist = distanceS.getDistance(DistanceUnit.CM);
+                    if (Dist>24) {
+                        driveFLM.setPower(-0.5);
+                        driveFRM.setPower(0.5);
+                        driveBLM.setPower(0.5);
+                        driveBRM.setPower(-0.5);
+                    }
+                }
+                driveForwardE(0.9, 1700);
+                driveBackwardE(0.9, 200);
+                spinLeftE(0.9, 900);
+
+                markerS.setPosition(0.75);
+                Thread.sleep(1000);
+                markerS.setPosition(0);
+
+                spinLeftE(0.9, 800);
+                driveForwardE(0.9, 2222);
+
+                collectorUpDownLeftS.setPosition(0);
+                collectorUpDownRghtS.setPosition(1);
+                Thread.sleep(800);
+            }
+        yellowVision.disable();
         }
     }
     public void driveForwardE(double power, int ticks) throws InterruptedException {
@@ -374,29 +430,36 @@ public class AutonomousDepot3 extends LinearOpMode {
         telemetry.update();
     }
     public void detectingAndSamplingGold(int distance) throws InterruptedException {
-        phoneS.setPosition(0.5);
-        Thread.sleep(500);
+        phoneS.setPosition(0.4);
+        Thread.sleep(100);
         EnderCVContoursTest();
         if (contourNumber != 0) {
-            //gold found
             isGold = true;
-            phoneS.setPosition(0.25);
-            Thread.sleep(100);
-            moveLeftE(0.4, 500);
-            phoneS.setPosition(0.90);
-            moveRghtE(0.4, 350);
-            driveBackwardE(0.6, distance);
+            if (shortPath) {
+                //aaa
+            }
+            if (!shortPath) {
+                phoneS.setPosition(0.2);
+                Thread.sleep(100);
+                moveLeftE(0.4, 700);
+                phoneS.setPosition(0.80);
+                moveRghtE(0.4, 550);
+                driveBackwardE(0.6, distance);
+            }
         }
     }
     public void sampling() throws InterruptedException {
         while (!isGold && samplingHowMany < 2) {
             samplingHowMany++;
+            shortPath = true;
             detectingAndSamplingGold(1400);
             if (!isGold) {
                 driveForwardE(0.6, 600);
+                shortPath = false;
                 detectingAndSamplingGold(2000);
                 if (!isGold) {
                     driveBackwardE(0.6, 1250);
+                    shortPath = false;
                     detectingAndSamplingGold(800);
                     if (!isGold) {
                         driveForwardE(0.6, 650);

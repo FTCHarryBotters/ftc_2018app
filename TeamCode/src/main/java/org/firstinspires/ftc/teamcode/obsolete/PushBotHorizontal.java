@@ -1,20 +1,22 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.obsolete;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@TeleOp(name = "VerticalPushBot", group = "Sample")
+@TeleOp(name = "Sample TeleOp", group = "Sample")
 @Disabled
-public class PushBotVertical extends LinearOpMode
+public class PushBotHorizontal extends LinearOpMode
 {
     //Declare Motors
     private DcMotor motorleft;
     private DcMotor motorright;
     private DcMotor motorarm;
+    private DcMotor armmotor = motorarm;
 
     //Declare Servos
     private Servo RightArmServo;
@@ -25,8 +27,8 @@ public class PushBotVertical extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
 
-        motorleft = hardwareMap.dcMotor.get("rightdrive");
-        motorright = hardwareMap.dcMotor.get("leftdrive");
+        motorleft = hardwareMap.dcMotor.get("leftdrive");
+        motorright = hardwareMap.dcMotor.get("rightdrive");
         motorarm = hardwareMap.dcMotor.get("armmotor");
 
         motorright.setDirection(DcMotor.Direction.REVERSE);
@@ -39,41 +41,32 @@ public class PushBotVertical extends LinearOpMode
         while(opModeIsActive())
         {
 
-            motorleft.setPower(-gamepad1.left_stick_y/2);
-            motorright.setPower(-gamepad1.right_stick_y/2);
+            motorleft.setPower(-gamepad1.left_stick_y);
+            motorright.setPower(-gamepad1.right_stick_y);
 
 
 
-            if (gamepad1.left_bumper) {
-                motorarm.setPower(-.25);
-
+            if (gamepad1.right_bumper) {
+                motorarm.setPower(.25);
             }else{
-                    if (gamepad1.right_bumper) {
-                        motorarm.setPower(.25);
-
+                    if (gamepad1.left_bumper) {
+                        motorarm.setPower(-.25);
                     }else{motorarm.setPower(0);
-                    int MotorPosition = motorarm.getCurrentPosition();
-                    motorarm.setTargetPosition(MotorPosition);
 
                  }
 
                  }
 
-            if(gamepad1.x) {motorarm.setTargetPosition(0); }
-
-            else {
-                motorarm.setPower(0);
-            }
 
 
 
             if (gamepad1.b) {
-                LeftArmServo.setPosition(.52);
-                RightArmServo.setPosition(.39);
+                LeftArmServo.setPosition(.01);
+                RightArmServo.setPosition(.98);
             }else{
                      if (gamepad1.a) {
-                         LeftArmServo.setPosition(.8);
-                         RightArmServo.setPosition(.17);
+                         LeftArmServo.setPosition(.52);
+                         RightArmServo.setPosition(.39);
                      }
                  }
 

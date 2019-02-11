@@ -61,6 +61,8 @@ public class TeleOpOfficial2 extends LinearOpMode {
         markerS              = hardwareMap.servo.get("markerS");
         phoneS               = hardwareMap.servo.get("phoneS");
 
+        phoneS.setPosition(0.9);
+
         waitForStart();
 
         latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -69,7 +71,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
         while(opModeIsActive()) {
 
             markerS.setPosition(0);
-            phoneS.setPosition(0.85);
+            phoneS.setPosition(0.9);
 
             if (gamepad1.x) {
                 drivespeed = 0.25;

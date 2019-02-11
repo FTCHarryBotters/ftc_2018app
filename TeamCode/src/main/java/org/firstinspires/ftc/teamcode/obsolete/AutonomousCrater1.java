@@ -1,31 +1,22 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.obsolete;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
-import org.opencv.core.MatOfPoint;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
+import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.firstinspires.ftc.teamcode.YellowVision;
+import org.opencv.core.MatOfPoint;
 
 import java.util.List;
-import java.util.Locale;
 
-@Autonomous(name = "AutonomousDepot", group = "Sample")
+import static java.lang.Math.abs;
+
+@Autonomous(name = "AutonomousCrater1", group = "Sample")
 @Disabled
-public class AutonomousDepot extends LinearOpMode {
+public class AutonomousCrater1 extends LinearOpMode{
 
     private YellowVision yellowVision = new YellowVision();
     int i = 0;
@@ -33,215 +24,178 @@ public class AutonomousDepot extends LinearOpMode {
     public static double power = .3;
     boolean isGold = false;
 
-    //declare motors
+    //declare
     private DcMotor driveFLM;
     private DcMotor driveFRM;
     private DcMotor driveBLM;
     private DcMotor driveBRM;
     private DcMotor latchLeftM;
     private DcMotor latchRightM;
-    private DcMotor linearForwardM;
-    private DcMotor linearUpDownM;
 
-    //declare servos
     private Servo latchLeftS;
     private Servo latchRightS;
     private Servo samplingS;
     private Servo markerS;
-    private Servo collectorS;
-    private Servo collectorUpDownS;
-    private Servo mineralDropperS;
 
-    //declare sensor
-    private BNO055IMU GyroS;
-    Orientation angles;
-    Acceleration gravity;
+    //Thread  delatchServoThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        //set motors to th configuration
+        //configure
         driveFLM       = hardwareMap.dcMotor.get("driveFLM");
         driveFRM       = hardwareMap.dcMotor.get("driveFRM");
         driveBLM       = hardwareMap.dcMotor.get("driveBLM");
         driveBRM       = hardwareMap.dcMotor.get("driveBRM");
         latchLeftM     = hardwareMap.dcMotor.get("latchLeftM");
         latchRightM    = hardwareMap.dcMotor.get("latchRightM");
-        linearForwardM = hardwareMap.dcMotor.get("linearForwardM");
-        linearUpDownM  = hardwareMap.dcMotor.get("linearUpDownM");
 
-        //reversing necessary motors
         driveFLM.setDirection(DcMotor.Direction.FORWARD);
         driveFRM.setDirection(DcMotor.Direction.REVERSE);
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
         driveBRM.setDirection(DcMotor.Direction.REVERSE);
-        latchLeftM.setDirection(DcMotor.Direction.FORWARD);
-        latchRightM.setDirection(DcMotor.Direction.REVERSE);
-        linearForwardM.setDirection(DcMotor.Direction.FORWARD);
-        linearUpDownM.setDirection(DcMotor.Direction.REVERSE);
+        latchLeftM.setDirection(DcMotor.Direction.REVERSE);
+        latchRightM.setDirection(DcMotor.Direction.FORWARD);
 
-        //sets the mode for the encoders
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //set servos to th configuration
-        latchLeftS       = hardwareMap.servo.get("latchLeftS");
-        latchRightS      = hardwareMap.servo.get("latchRightS");
-        samplingS        = hardwareMap.servo.get("samplingS");
-        markerS          = hardwareMap.servo.get("markerS");
-        collectorS       = hardwareMap.servo.get("collectorS");
-        collectorUpDownS = hardwareMap.servo.get("collectorUpDownS");
-        mineralDropperS  = hardwareMap.servo.get("mineralDropperS");
+        //delatchServoThread = new DelatchServoThread();
 
-        //set sensor to configuration
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        GyroS = hardwareMap.get(BNO055IMU.class, "GyroS");
-        GyroS.initialize(parameters);
+        latchLeftS  = hardwareMap.servo.get("latchLeftS");
+        latchRightS = hardwareMap.servo.get("latchRightS");
+        samplingS   = hardwareMap.servo.get("samplingS");
+        markerS     = hardwareMap.servo.get("markerS");
 
         // can replace with ActivityViewDisplay.getInstance() for fullscreen
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
         yellowVision.enable();
 
-        //used for gyro
-        composeTelemetry();
 
         waitForStart();
+        //what runs
 
-            GyroS.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        deLatchRobot();
+        Thread.sleep(1500);
 
-            //the following line de latches the robot from the lander
-            //it is still being tested
-            deLatchRobot();
+        driveBackwardE(0.1, 50);
+        moveRightE(0.6, 250);
+        driveForwardE(0.7, 350);
+        spinRightE(0.4, 900);
+        driveBackwardE(0.7, 200);
+        moveLeftE(0.7, 100);
+        Thread.sleep(250);
 
-            //the following lines move the robot from the lander
-            //and line it up so the robot can sample
-            driveBackwardE(0.1, 50);
-            moveRightE(0.3, 200);
-            driveForwardE(0.4, 400);
-            spinRightE(0.4, 920);
-            driveBackwardE(0.4, 150);
-            moveLeftE(0.3, 150);
-            Thread.sleep(250);
+        SamplingSection();
 
-            //samples the gold mineral
-            SamplingSection();
+        spinRightE(0.6, 1300);
+        moveRightE(0.7, 600);
+        driveForwardE(0.9, 2100);
+        moveLeftE(0.7, 300);
+        spinLeftE(0.5, 450);
+        driveForwardE(0.5, 250);
 
-            //the following lines move robot from sampling
-            //and line it up fo marker dropping
-            spinRightE(0.4, 1300);
-            moveRightE(0.2, 600);
-            driveBackwardE(0.4, 1600);
-            moveLeftE(0.4, 100);
-            spinRightE(0.4, 450);
-            driveBackwardE(0.4, 450);
+        markerS.setPosition(0.6);
+        Thread.sleep(1000);
 
-            //the following lines drop the marker
-            //the collector mechanism needs to move
-            //before the marker dropper can move
-            //LIES
+        driveBackwardE(0.5, 250);
+        spinRightE(0.5, 450);
+        moveRightE(0.7, 200);
+        driveBackwardE(0.9, 2222);
 
-
-        //stop the vision system
         yellowVision.disable();
     }
-    //theses methods move the robots without using encoders.
-    //they were made because calling methods from teleop2 did not work and I
-    //could just ctrl C V the entire thing rather  than changing minor parts here and there
-    //you probably shouldn't use them, they need time, so just use the ones that use encoders
-    public void driveForward(double power)
+    //methods
+    //methods for the latch arm
+    private void latchArm(double power, long time) throws InterruptedException
     {
-        //this function is to move forward.
-        //all motors move forward
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        latchLeftM.setPower(power);
+        latchRightM.setPower(power);
+        Thread.sleep(time);
+        latchLeftM.setPower(0);
+        latchRightM.setPower(0);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void driveBackward(double power)
+    private void latchArmE(double power, int ticks) throws InterruptedException
     {
-        //this function is to move backward
-        //all motors move back
-        driveForward(-power);
-    }
-    public void spinLeft(double power)
-    {
-        //spins the robot left
-        //the left side moves backward &
-        //the right side motors move forward
-        driveFLM.setPower(-power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(-power);
-        driveBRM.setPower(power);
-    }
-    public void spinRight(double power)
-    {
-        //spins the robot right
-        //the right side moves backward &
-        //the left side motors move forward
-        spinLeft(-power);
-    }
-    public void moveLeft(double power)
-    {
-        //slides the robot left
-        //the front left and back right motors move backward
-        //while the front right and back left motors move forward
-        driveFLM.setPower(-power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(-power);
-    }
-    public void moveRight(double power)
-    {
-        //slides the robot right
-        //the front right and back left motors move backward
-        //while the front left and back right motors move forward
-        moveLeft(-power);
-    }
-    public void stopMoving()
-    {
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-    }
+        //reset encoders
 
-    //the following two methods turn the robot using the Gyroscope rather than the encoders or time
-    //they do not work. SAD.
-    private void spinLeftG(double power, int yaw) throws NullPointerException
-    {
-        composeTelemetry();
-        telemetry.update();
-        if (angles.firstAngle < yaw)
+        latchLeftM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchLeftM.setPower(power);
+        latchRightM.setPower(power);
+        //wait
+        while (abs(latchLeftM.getCurrentPosition()) < abs(ticks) && abs(latchRightM.getCurrentPosition()) < abs(ticks))
         {
+            telemetry.addData("power", latchLeftM.getPower());
             telemetry.update();
-            spinLeft(power);
-        }else{
-            stopMoving();
-        }
-    }
-    private void spinRightG(double power, int yaw)throws NullPointerException
-    {
-        composeTelemetry();
-        telemetry.update();
-        if (angles.firstAngle > -yaw)
-        {
-            telemetry.update();
-            spinRight(power);
-        }else{
-            stopMoving();
-        }
-    }
 
-    //the following methods deal with moving the robot around with encoders.
+        }
+        //stop motors. why o why.
+        // the latchE works *fundamentally* different to the driveE.
+        // doing the same thing didn't work, and now I pay the price: inconsistent code
+        latchLeftM.setPower(0);
+        latchRightM.setPower(0);
+        latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    private void deLatchRobot() throws InterruptedException
+    {
+        latchLeftM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        latchLeftM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchRightM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("Position1", latchLeftM.getCurrentPosition());
+        telemetry.update();
+
+        //delatchServoThread.start();
+        latchArm(1, Constants.UPTIME);
+        latchLeftS.setPosition(1);
+        latchRightS.setPosition(0);
+
+        telemetry.addData("Position2", latchLeftM.getCurrentPosition());
+        telemetry.update();
+
+        telemetry.addData("Position3", latchLeftM.getCurrentPosition());
+        telemetry.update();
+        // replace the value from constants like Constants.TICkSDOWN
+
+        latchArmE(-0.5,  Constants.TICKSDOWN);
+        latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        telemetry.addData("Position4", latchLeftM.getCurrentPosition());
+        telemetry.update();
+    }
+    /*private class DelatchServoThread  extends Thread
+    {
+        public DelatchServoThread (){
+
+        }
+        @Override
+        public void run()
+        {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {e.printStackTrace();}
+
+            latchLeftS.setPosition(1);
+            latchRightS.setPosition(0);
+            this.interrupt();
+        }
+    }*/
     public void driveForwardE(double power, int ticks) throws InterruptedException
     {
         //Reset Encoders
@@ -279,6 +233,11 @@ public class AutonomousDepot extends LinearOpMode {
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -323,6 +282,11 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -365,6 +329,11 @@ public class AutonomousDepot extends LinearOpMode {
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -409,6 +378,11 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -451,6 +425,11 @@ public class AutonomousDepot extends LinearOpMode {
         driveFRM.setPower(0);
         driveBLM.setPower(0);
         driveBRM.setPower(0);
+
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -495,31 +474,16 @@ public class AutonomousDepot extends LinearOpMode {
         driveBLM.setPower(0);
         driveBRM.setPower(0);
 
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-    //methods for the latch arm
-    private void latchArm(double power, long time) throws InterruptedException
-    {
-        latchLeftM.setPower(power);
-        latchRightM.setPower(power);
-        Thread.sleep(time);
-    }
-    private void deLatchRobot() throws InterruptedException
-    {
-        latchArm(1, 500);
-        latchLeftS.setPosition(1);
-        latchRightS.setPosition(0);
-        latchArm(-0.25, 1300);
-        latchArm(0, 10);
-        latchLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        latchRightM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-    //the following methods deal with the sampling
     public void EnderCVContoursTest()
     {
         List<MatOfPoint> contours = yellowVision.getContours();
@@ -539,11 +503,12 @@ public class AutonomousDepot extends LinearOpMode {
         {
             isGold = true;
             samplingS.setPosition(.65);
+            driveForwardE(power, 100);
             Thread.sleep(100);
             driveBackwardE(power, 400);
             samplingS.setPosition(0);
             driveBackwardE(power, ticks-400);
-        }
+        }else{i = 0;}
     }
     public void SamplingSection() throws InterruptedException
     {
@@ -572,70 +537,4 @@ public class AutonomousDepot extends LinearOpMode {
             }
         }
     }
-
-    //method for the IMU. works
-    private void composeTelemetry() throws NullPointerException{
-
-        // At the beginning of each telemetry update, grab a bunch of data
-        // from the IMU that we will then display in separate lines.
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            // Acquiring the angles is relatively expensive; we don't want
-            // to do that in each of the three items that need that info, as that's
-            // three times the necessary expense.
-            angles   = GyroS.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = GyroS.getGravity();
-        }
-        });
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return GyroS.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override public String value() {
-                        return GyroS.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("YAW", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("grvty", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-    }
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
 }
-//

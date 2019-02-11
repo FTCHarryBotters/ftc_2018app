@@ -1,20 +1,19 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.obsolete;
 
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Autonomous(name = "Test Touch", group = "Sample")
+@Autonomous(name = "TestAuto", group = "Sample")
 @Disabled
-public class TestTouch extends LinearOpMode
+public class AutonomousTest1 extends LinearOpMode
 {
     //Declare Motors
     private DcMotor motorleft;
@@ -26,7 +25,7 @@ public class TestTouch extends LinearOpMode
     private Servo LeftArmServo;
 
     //Declare Color sensor
-    DigitalChannel digitalTouch;
+    public ColorSensor ColorSensor;
 
 
     @Override
@@ -44,40 +43,39 @@ public class TestTouch extends LinearOpMode
         LeftArmServo = hardwareMap.servo.get("LeftArmServo");
         RightArmServo = hardwareMap.servo.get("RightArmServo");
 
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "TouchSensor");
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        ColorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
 
 
 
 
-
-        //set servos to open position during initialization
+        //set servos to open positionduring initialization
         LeftArmServo.setPosition(.52);
         RightArmServo.setPosition(.39);
 
         waitForStart();
 
-        while (opModeIsActive()){
+        DriveForward(1, 1000);
+        STOP();
+        Thread.sleep(1000);
+        closeServos();
+        Armup();
+        Thread.sleep(1000);
+        DriveForward(1, 1000);
+        Armdown();
+        openServos();
 
-        if (digitalTouch.getState() == false) {
 
-            telemetry.addData("Digital Touch", "Is Not Pressed");
-            DriveForward(1);
-        } else {
-            telemetry.addData("Digital Touch", "Is Pressed");
-            STOP();
-        }
 
-        telemetry.update();
+
+
+
 
     }
-
-
-        }
-    public void DriveForward(double power) throws InterruptedException
+    public void DriveForward(double power, long time) throws InterruptedException
     {
         motorleft.setPower(power);
         motorright.setPower(power);
+        Thread.sleep(time);
     }
 
     public void closeServos()
@@ -94,8 +92,8 @@ public class TestTouch extends LinearOpMode
 
     public void Armup() throws InterruptedException
     {
-        motorarm.setPower(.25);
-        Thread.sleep(1000);
+        motorarm.setPower(1);
+        Thread.sleep(500);
     }
 
     public void Armdown() throws InterruptedException
@@ -106,8 +104,8 @@ public class TestTouch extends LinearOpMode
 
     public void STOP() throws InterruptedException
     {
-        DriveForward(0);
-        motorright.setPower(0);
-        motorleft.setPower(0);
+        DriveForward(0,1);
+        motorarm.setPower(0);
+        Thread.sleep(1000);
     }
 }
