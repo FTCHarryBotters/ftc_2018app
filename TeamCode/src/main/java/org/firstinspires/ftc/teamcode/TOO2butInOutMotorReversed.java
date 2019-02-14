@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOpOfficial2", group = "Sample")
-public class TeleOpOfficial2 extends LinearOpMode {
+@TeleOp(name = "TOO2.2", group = "Sample")
+public class TOO2butInOutMotorReversed extends LinearOpMode {
 
     boolean sendDropperUp = false;
     boolean bringDropperDown = false;
@@ -52,7 +53,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
         latchM.setDirection(DcMotor.Direction.FORWARD);
         upDownM.setDirection(DcMotor.Direction.FORWARD);
         inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
-        inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
+        inOutRghtM.setDirection(DcMotor.Direction.FORWARD);
 
         collectorS           = hardwareMap.servo.get("collectorS");
         collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");

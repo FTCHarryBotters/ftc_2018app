@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -63,7 +64,7 @@ public class AutonomousCrater3 extends LinearOpMode {
         latchM.setDirection(DcMotor.Direction.FORWARD);
         upDownM.setDirection(DcMotor.Direction.FORWARD);
         inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
-        inOutRghtM.setDirection(DcMotor.Direction.FORWARD);
+        inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
 
         collectorS           = hardwareMap.servo.get("collectorS");
         collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
@@ -86,7 +87,7 @@ public class AutonomousCrater3 extends LinearOpMode {
         waitForStart();
         if (true!=false&&false!=true&&true&&!false&&!!!!!!!false) {
             //what runs
-            delatch();
+            //delatch();
             moveLeftE(0.7, 100);
             driveForwardE(0.8, 550);
             phoneS.setPosition(0.4);
@@ -421,9 +422,8 @@ public class AutonomousCrater3 extends LinearOpMode {
         EnderCVContoursTest();
         if (contourNumber != 0) {
             //gold found
-            isGold = true;
-            phoneS.setPosition(0.2
-            );
+            isGold=true;
+            phoneS.setPosition(0.2);
             Thread.sleep(100);
             moveLeftE(0.4, 500);
             phoneS.setPosition(0.80);
