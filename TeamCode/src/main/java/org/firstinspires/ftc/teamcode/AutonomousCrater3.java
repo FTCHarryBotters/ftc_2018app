@@ -19,10 +19,11 @@ import static java.lang.Math.abs;
 @Autonomous(name = "AutonomousCrater3", group = "Sample")
 public class AutonomousCrater3 extends LinearOpMode {
 
+    //used for vision program and sampling
     private YellowVision yellowVision = new YellowVision();
-    int contourNumber = 0;
-    int samplingHowMany = 0;
-    boolean isGold = false;
+    private int contourNumber = 0;
+    private int samplingHowMany = 0;
+    private boolean isGold = false;
 
     //declare
     private DcMotor driveFLM;
@@ -42,12 +43,15 @@ public class AutonomousCrater3 extends LinearOpMode {
     private Servo phoneS;
     private Servo markerS;
 
-    private DistanceSensor distanceS;
-
+    //declare sensor
+    private DistanceSensor distanceFLS;
+    private DistanceSensor distanceBLS;
+    private DistanceSensor distanceFS;
+    private DistanceSensor distanceBS;
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //configure
+        //configure motors
         driveFLM   = hardwareMap.dcMotor.get("driveFLM");
         driveFRM   = hardwareMap.dcMotor.get("driveFRM");
         driveBLM   = hardwareMap.dcMotor.get("driveBLM");
@@ -57,6 +61,7 @@ public class AutonomousCrater3 extends LinearOpMode {
         inOutLeftM = hardwareMap.dcMotor.get("inOutLeftM");
         inOutRghtM = hardwareMap.dcMotor.get("inOutRightM");
 
+        //set motors's direction
         driveFLM.setDirection(DcMotor.Direction.FORWARD);
         driveFRM.setDirection(DcMotor.Direction.REVERSE);
         driveBLM.setDirection(DcMotor.Direction.FORWARD);
@@ -66,6 +71,7 @@ public class AutonomousCrater3 extends LinearOpMode {
         inOutLeftM.setDirection(DcMotor.Direction.REVERSE);
         inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
 
+        //configure sensors
         collectorS           = hardwareMap.servo.get("collectorS");
         collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
         collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
@@ -73,379 +79,178 @@ public class AutonomousCrater3 extends LinearOpMode {
         markerS              = hardwareMap.servo.get("markerS");
         phoneS               = hardwareMap.servo.get("phoneS");
 
+        //configure sensor
+        distanceFLS = hardwareMap.get(DistanceSensor.class, "distanceFLS");
+        distanceBLS = hardwareMap.get(DistanceSensor.class, "distanceBLS");
+        distanceFS = hardwareMap.get(DistanceSensor.class, "distanceFS");
+        distanceBS = hardwareMap.get(DistanceSensor.class, "distanceBS");
+
+        //set some motors to use encoders
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        distanceS = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
-
+        //set up vision code
         yellowVision.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         yellowVision.setShowCountours(true);
         yellowVision.enable();
 
         waitForStart();
-        if (true!=false&&false!=true&&true&&!false&&!!!!!!!false) {
-            //what runs
-            //delatch();
-            moveLeftE(0.7, 100);
-            driveForwardE(0.8, 550);
-            phoneS.setPosition(0.4);
-            spinRghtE(0.7, 900);
-            driveBackwardE(0.8, 75);
+        if (!!!!!!!!!!!!!!!!true) {
 
+            //move from latch to center mineral
+            //delatch();                         //drop from latch
+            moveLeftE(0.9, 100);    //out of latch
+            driveForwardE(0.9, 550);//away from lander
+            phoneS.setPosition(0.4);           //moves phone to see
+            spinRghtE(0.9, 900);    //spin so phone toward minerals
+            driveBackwardE(0.9, 75);//lines up with center mineral
+
+            //goes to each mineral and turn, checks if it's gold, and moves it if it is
             sampling();
 
-            phoneS.setPosition(0.9);
-
-            spinLeftE(0.7, 500);
-
-            double Dist = distanceS.getDistance(DistanceUnit.CM);
-            while (Dist>24) {
-                Dist = distanceS.getDistance(DistanceUnit.CM);
-                if (Dist>24) {
-                    driveFLM.setPower(-0.5);
-                    driveFRM.setPower(0.5);
-                    driveBLM.setPower(0.5);
-                    driveBRM.setPower(-0.5);
+            //moves robot to depot, lines up marker to be dropped
+            spinLeftE(0.7, 500);                      //lines up with wall
+            double Dist = distanceFLS.getDistance(DistanceUnit.CM);//saves distance measurement
+            while (Dist>24) {                                    //checks if we've reached dist from wall
+                Dist = distanceFLS.getDistance(DistanceUnit.CM);   //re-saves distance measurement
+                if (Dist>24) {                                   //checks if we've reached distance
+                    driveFLM.setPower(-0.5);                     //moves motors
+                    driveFRM.setPower(+0.5);                     //moves motors
+                    driveBLM.setPower(+0.5);                     //moves motors
+                    driveBRM.setPower(-0.5);                     //moves motors
                 }
             }
-            Thread.sleep(100);
+            Thread.sleep(100);              //waits for bot to stop moving
+            driveBackwardE(0.9, 1500);//drives to depot
+            moveRghtE(0.9, 200);      //move away from wall
+            spinRghtE(0.9, 900);      //spins so marker is towards depot
 
-            driveBackwardE(0.9, 1500);
-            moveRghtE(0.9, 200);
-            spinRghtE(0.9, 900);
+            //drops marker
+            markerS.setPosition(0.75);//drops marker
+            Thread.sleep(1000);  //waits for marker to slide
+            markerS.setPosition(0);   //bring it back up
 
-            markerS.setPosition(0.75);
-            Thread.sleep(1000);
-            markerS.setPosition(0);
+            //go to crater
+            spinLeftE(0.9, 900);   //spin to face crater
+            driveForwardE(1, 2222);//go to crater
 
-            spinLeftE(0.9, 900);
-            driveForwardE(0.9, 2222);
+            //move collector into crater
+            collectorUpDownLeftS.setPosition(0);//moves down left side
+            collectorUpDownRghtS.setPosition(1);//moves down right side
+            Thread.sleep(800);             //waits for them to move before program stops
 
-            collectorUpDownLeftS.setPosition(0);
-            collectorUpDownRghtS.setPosition(1);
-            Thread.sleep(800);
-
-        yellowVision.disable();
+        yellowVision.disable();//stops vision program
         }
-    }
-    public void driveForwardE(double power, int ticks) throws InterruptedException {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(ticks);
-        driveFRM.setTargetPosition(ticks);
-        driveBLM.setTargetPosition(ticks);
-        driveBRM.setTargetPosition(ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //driveForward
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void driveBackwardE(double power, int ticks) throws InterruptedException {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(-ticks);
-        driveFRM.setTargetPosition(-ticks);
-        driveBLM.setTargetPosition(-ticks);
-        driveBRM.setTargetPosition(-ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //driveBackward
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void spinLeftE(double power, int ticks) {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(-ticks);
-        driveFRM.setTargetPosition(ticks);
-        driveBLM.setTargetPosition(-ticks);
-        driveBRM.setTargetPosition(ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //spinLeft
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void spinRghtE(double power, int ticks) throws InterruptedException {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(ticks);
-        driveFRM.setTargetPosition(-ticks);
-        driveBLM.setTargetPosition(ticks);
-        driveBRM.setTargetPosition(-ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //spinRght
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void moveLeftE(double power, int ticks) throws InterruptedException {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(-ticks);
-        driveFRM.setTargetPosition(ticks);
-        driveBLM.setTargetPosition(ticks);
-        driveBRM.setTargetPosition(-ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //moveLeft
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void moveRghtE(double power, int ticks) throws InterruptedException {
-
-        //Reset Encoders
-        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //set target position
-        driveFLM.setTargetPosition(ticks);
-        driveFRM.setTargetPosition(-ticks);
-        driveBLM.setTargetPosition(-ticks);
-        driveBRM.setTargetPosition(ticks);
-
-        //set ot RUN_TO_POSITION mode
-        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //moveRght
-        driveFLM.setPower(power);
-        driveFRM.setPower(power);
-        driveBLM.setPower(power);
-        driveBRM.setPower(power);
-
-        //wait until target position
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
-
-        //stopMoving();
-        driveFLM.setPower(0);
-        driveFRM.setPower(0);
-        driveBLM.setPower(0);
-        driveBRM.setPower(0);
-
-        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void delatch() {
-        latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        latchM.setTargetPosition(26300);
-        latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        latchM.setPower(1);
-        while (latchM.isBusy()) {}
-        latchM.setPower(0);
-        latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);      //resets encoder values to zero
+        latchM.setTargetPosition(26300);                             //set how many ticks are needed to move
+        latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);             //lets it move
+        latchM.setPower(1);                                          //makes it move
+        while (latchM.isBusy()) {}                                   //wait until it is done moving
+        latchM.setPower(0);                                          //stop moving
+        latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//stop moving part 2 robot boogaloo
+        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);           //goes back to normal mode
     }
     public void EnderCVContoursTest() {
-        List<MatOfPoint> contours = yellowVision.getContours();
-        contourNumber = 0;
-        contourNumber = contours.size();
-        telemetry.addData("number of Countours i:", contourNumber);
+        List<MatOfPoint>contours=yellowVision.getContours();     //gets the contours from seeing program
+        contourNumber=contours.size();                           //saves contour number
+        telemetry.addData("contourNumber", contourNumber);//tells us the contour number
         telemetry.update();
     }
-    public void detectingAndSamplingGold(int distance) throws InterruptedException {
-        Thread.sleep(100);
-        EnderCVContoursTest();
-        if (contourNumber != 0) {
-            //gold found
-            isGold=true;
-            phoneS.setPosition(0.2);
-            Thread.sleep(100);
-            moveLeftE(0.4, 500);
-            phoneS.setPosition(0.80);
-            moveRghtE(0.7, 350);
-            driveBackwardE(0.6, distance);
+    public void goldMover(int distance) throws InterruptedException {
+        Thread.sleep(100);                 //idk
+        EnderCVContoursTest();                  //saves number of contours
+        if (contourNumber != 0) {               //checks if it is gold
+            isGold=true;                        //saves info that we found gold
+            phoneS.setPosition(0.2);            //moves phone down push mineral
+            Thread.sleep(100);             //waits for phone to move
+            moveLeftE(0.4, 500);     //moves mineral
+            moveLeftE(0.4, 500);     //moves mineral
+            phoneS.setPosition(0.90);           //pull phone back to vertikal
+            moveRghtE(0.7, 350);     //moves back to previous position
+            driveBackwardE(0.6, distance);//drives back to set position for rest of program
         }
     }
-    public void sampling() throws InterruptedException {
-        while (!isGold && samplingHowMany < 2) {
-            samplingHowMany++;
-            detectingAndSamplingGold(1400);
-            if (!isGold) {
-                driveForwardE(0.7, 600);
-                detectingAndSamplingGold(2000);
-                if (!isGold) {
-                    driveBackwardE(0.7, 1250);
-                    detectingAndSamplingGold(800);
-                    if (!isGold) {
-                        driveForwardE(0.7, 650);
+    public void sampling() throws InterruptedException {   //moves to each mineral, checks it, moves it if needed
+        while (!isGold && samplingHowMany < 2) {           //checks if we've found gold and how many times we've tried
+            samplingHowMany++;                             //increases how many times we've tried
+            goldMover(1400);                       //check mineral and may move it
+            if (!isGold) {                                 //checks if we've seen gold
+                driveForwardE(0.7, 600);        //goes to next mineral
+                goldMover(2000);                    //check mineral and may move it
+                if (!isGold) {                             //checks if we've seen gold
+                    driveBackwardE(0.7, 1250);  //drives to next mineral
+                    goldMover(800);                //check mineral and may move it
+                    if (!isGold) {                         //checks if we've found gold
+                        driveForwardE(0.7, 650);//drives back to center mineral
                     }
                 }
             }
         }
+        phoneS.setPosition(0.9);                           //move phone back up
+    }
+    public void driveForwardE(double power, int ticks) throws InterruptedException {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(ticks);driveFRM.setTargetPosition(ticks);driveBLM.setTargetPosition(ticks);driveBRM.setTargetPosition(ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void driveBackwardE(double power, int ticks) throws InterruptedException {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(-ticks);driveFRM.setTargetPosition(-ticks);driveBLM.setTargetPosition(-ticks);driveBRM.setTargetPosition(-ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void spinLeftE(double power, int ticks) {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(-ticks);driveFRM.setTargetPosition(ticks);driveBLM.setTargetPosition(-ticks);driveBRM.setTargetPosition(ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void spinRghtE(double power, int ticks) throws InterruptedException {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(ticks);driveFRM.setTargetPosition(-ticks);driveBLM.setTargetPosition(ticks);driveBRM.setTargetPosition(-ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void moveLeftE(double power, int ticks) throws InterruptedException {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(-ticks);driveFRM.setTargetPosition(ticks);driveBLM.setTargetPosition(ticks);driveBRM.setTargetPosition(-ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void moveRghtE(double power, int ticks) throws InterruptedException {
+        driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driveFLM.setTargetPosition(ticks);driveFRM.setTargetPosition(-ticks);driveBLM.setTargetPosition(-ticks);driveBRM.setTargetPosition(ticks);
+        driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
+        driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
