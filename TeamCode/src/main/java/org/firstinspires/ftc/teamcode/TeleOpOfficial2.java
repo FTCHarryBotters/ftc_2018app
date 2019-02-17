@@ -12,7 +12,8 @@ public class TeleOpOfficial2 extends LinearOpMode {
     //for autom
     boolean sendDropperUp = false;
     boolean bringDropperDown = false;
-    int testCounter = 0;
+    int UpTicks = 0;
+    int DownTicks = 0;
 
     //declare motors
     private DcMotor driveFLM;
@@ -24,7 +25,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
     private DcMotor inOutLeftM;
     private DcMotor inOutRghtM;
 
-    double drivespeed = 1;
+    double drivespeed = 0.58;
 
     //declare swervos
     private Servo collectorS;
@@ -57,7 +58,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
         inOutLeftM.setDirection(DcMotor.Direction.FORWARD);
         inOutRghtM.setDirection(DcMotor.Direction.REVERSE);
 
-        //configire seervos
+        //configure servos
         collectorS           = hardwareMap.servo.get("collectorS");
         collectorUpDownLeftS = hardwareMap.servo.get("collectorUpDownLeftS");
         collectorUpDownRghtS = hardwareMap.servo.get("collectorUpDownRightS");
@@ -75,13 +76,13 @@ public class TeleOpOfficial2 extends LinearOpMode {
         //makes the vertikal slide use encoders for Autom
         upDownM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         waitForStart();
+
         upDownM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(opModeIsActive()) {
 
-            telemetry.addData("F", upDownM.getCurrentPosition());
-            telemetry.update();
+        while(opModeIsActive()) {
 
             //makes these two servos not move
             markerS.setPosition(0);
@@ -90,10 +91,10 @@ public class TeleOpOfficial2 extends LinearOpMode {
             //lets KV change how fast the robot moves
             //full speed normally and quart speed for latching
             if (gamepad1.x) {
-                drivespeed = 0.25;
+                drivespeed=0.25;
             }else {
                 if (gamepad1.y) {
-                    drivespeed = 1;
+                    drivespeed=0.58;
                 }
             }
 
@@ -106,16 +107,19 @@ public class TeleOpOfficial2 extends LinearOpMode {
             driveBRM.setPower((-gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x)*drivespeed);
 
             //lets KV use the triggers(2) to move the Latch
-            if (gamepad1.right_trigger>0.1) {
+            if (gamepad1.dpad_up) {
                 latchM.setPower(1);
             }else {
-                if (gamepad1.left_trigger > 0.1) {
+                if (gamepad1.dpad_down) {
                     latchM.setPower(-1);
                 }else {
                     latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     latchM.setPower(0);
                     latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 }
+            }
+            if (gamepad1.a) {
+                relatch();
             }
 
             //KV uses the bumpers(1) to move the collector in and out
@@ -167,7 +171,9 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 if (gamepad2.left_bumper) {
                     upDownM.setPower(-1);
                 }else {
-                    upDownM.setPower(0);
+                    if (!sendDropperUp) {
+                        upDownM.setPower(0);
+                    }
                 }
             }
 
@@ -175,59 +181,83 @@ public class TeleOpOfficial2 extends LinearOpMode {
             collectorUpDownLeftS.setPosition(((+gamepad2.left_stick_y)*0.5)+0.5);
             collectorUpDownRghtS.setPosition(((-gamepad2.left_stick_y)*0.5)+0.5);
 
-            //Miike can use the x button to send the vertikal slide up
+
+            //upDownM.setPower(0.1);
+            //Miike can use the x button to send the vertical slide up
             //it first sets a bool to true so we can do other things while sending up
             //it then uses encoders to set it to the right position
-            if (gamepad2.x) {
+            if (gamepad2.dpad_up) {
                 sendDropperUp = true;
-                upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upDownM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                upDownM.setTargetPosition(1000);
+                UpTicks=upDownM.getCurrentPosition();
+                upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
+
             if (sendDropperUp) {
-                if (Math.abs(upDownM.getCurrentPosition())<Math.abs(upDownM.getTargetPosition())) {
+                UpTicks=upDownM.getCurrentPosition();
+                if (UpTicks<2100) {
                     upDownM.setPower(0.5);
                 }else {
                     upDownM.setPower(0);
-                    upDownM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     sendDropperUp = false;
                 }
             }
 
             //Miike uses the up button to drop the minerals and then bring the vertikal slide bak down
             //same as other thing
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_down) {
                 mineralDropperS.setPosition(0);
-                Thread.sleep(750);
+                Thread.sleep(500);
                 mineralDropperS.setPosition(0.5);
                 Thread.sleep(750);
                 mineralDropperS.setPosition(1);
-                Thread.sleep(750);
+                Thread.sleep(500);
                 mineralDropperS.setPosition(0.5);
                 bringDropperDown = true;
-                upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upDownM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                upDownM.setTargetPosition(-2000);
+                DownTicks=upDownM.getCurrentPosition();
+                upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (bringDropperDown) {
-                if (Math.abs(upDownM.getCurrentPosition())<Math.abs(upDownM.getTargetPosition())) {
+                DownTicks=upDownM.getCurrentPosition();
+                if (DownTicks>(-2100)) {
                     upDownM.setPower(-0.5);
                 }else {
                     upDownM.setPower(0);
-                    upDownM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bringDropperDown = false;
                 }
             }
-
-            //used to measure the cycles of our loop
-            telemetry.addData("a", testCounter);
-            telemetry.update();
-            testCounter++;
-
+            if (gamepad2.dpad_left||gamepad1.dpad_left) {
+                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                upDownM.setPower(0);
+                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                sendDropperUp=false;
+                bringDropperDown=false;
+                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                upDownM.setPower(0);
+                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);            }
             idle();
         }
     }
     //methods for moving.
+    public void relatch() {
+        latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);      //resets encoder values to zero
+        latchM.setTargetPosition(-26300);                            //set how many ticks are needed to move
+        latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);             //lets it move
+        latchM.setPower(1);                                          //makes it move
+        while (latchM.isBusy()) {                                    //wait until it is done moving
+            if (gamepad1.b) {
+                latchM.setPower(0);
+                latchM.setTargetPosition(0);
+                latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+        }
+        latchM.setPower(0);                                          //stop moving
+        latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//stop moving part 2 robot boogaloo
+        latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);           //goes back to normal mode
+    }
     public void driveForward(double power) {
         //this function is to move forward.
         //all motors move forward
