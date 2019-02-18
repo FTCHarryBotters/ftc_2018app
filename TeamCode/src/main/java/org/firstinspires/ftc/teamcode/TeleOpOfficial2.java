@@ -95,6 +95,10 @@ public class TeleOpOfficial2 extends LinearOpMode {
             }else {
                 if (gamepad1.y) {
                     drivespeed=0.58;
+                }else {
+                    if (gamepad1.right_trigger>0.1&&gamepad1.left_trigger>0.1) {
+                        drivespeed=1;
+                    }
                 }
             }
 

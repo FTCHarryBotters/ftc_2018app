@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Paint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -101,9 +103,11 @@ public class AutonomousCrater3 extends LinearOpMode {
         if (!!!!!!!!!!!!!!!!true) {
 
             //move from latch to center mineral
-            //delatch();                         //drop from latch
+            delatch();                         //drop from latch
+            collectorUpDownLeftS.setPosition(0.5);
+            collectorUpDownRghtS.setPosition(0.5);
             moveLeftE(0.9, 100);    //out of latch
-            driveForwardE(0.9, 550);//away from lander
+            driveForwardE(0.9, 650);//away from lander
             phoneS.setPosition(0.4);           //moves phone to see
             spinRghtE(0.9, 900);    //spin so phone toward minerals
             driveBackwardE(0.9, 75);//lines up with center mineral
@@ -112,19 +116,10 @@ public class AutonomousCrater3 extends LinearOpMode {
             sampling();
 
             //moves robot to depot, lines up marker to be dropped
-            spinLeftE(0.7, 500);                      //lines up with wall
-            double Dist = distanceFLS.getDistance(DistanceUnit.CM);//saves distance measurement
-            while (Dist>24) {                                    //checks if we've reached dist from wall
-                Dist = distanceFLS.getDistance(DistanceUnit.CM);   //re-saves distance measurement
-                if (Dist>24) {                                   //checks if we've reached distance
-                    driveFLM.setPower(-0.5);                     //moves motors
-                    driveFRM.setPower(+0.5);                     //moves motors
-                    driveBLM.setPower(+0.5);                     //moves motors
-                    driveBRM.setPower(-0.5);                     //moves motors
-                }
-            }
-            Thread.sleep(100);              //waits for bot to stop moving
-            driveBackwardE(0.9, 1500);//drives to depot
+            spinLeftE(0.9, 450);      //lines up with wall
+            alignLeft(0.3, 17);  //aligns with wall using dist sensor
+            Thread.sleep(50);               //waits for bot to stop moving
+            driveBackwardE(0.8, 1600);//drives to depot
             moveRghtE(0.9, 200);      //move away from wall
             spinRghtE(0.9, 900);      //spins so marker is towards depot
 
@@ -135,12 +130,10 @@ public class AutonomousCrater3 extends LinearOpMode {
 
             //go to crater
             spinLeftE(0.9, 900);   //spin to face crater
-            driveForwardE(1, 2222);//go to crater
-
-            //move collector into crater
-            collectorUpDownLeftS.setPosition(0);//moves down left side
-            collectorUpDownRghtS.setPosition(1);//moves down right side
-            Thread.sleep(800);             //waits for them to move before program stops
+            alignLeft(0.3, 17);
+            collectorUpDownLeftS.setPosition(1);//moves down left side
+            collectorUpDownRghtS.setPosition(0);//moves down right side
+            driveForwardE(1, 2100);//go to crater
 
         yellowVision.disable();//stops vision program
         }
@@ -168,11 +161,10 @@ public class AutonomousCrater3 extends LinearOpMode {
             isGold=true;                        //saves info that we found gold
             phoneS.setPosition(0.2);            //moves phone down push mineral
             Thread.sleep(100);             //waits for phone to move
-            moveLeftE(0.4, 500);     //moves mineral
-            moveLeftE(0.4, 500);     //moves mineral
+            moveLeftE(0.8, 500);     //moves mineral
             phoneS.setPosition(0.90);           //pull phone back to vertikal
-            moveRghtE(0.7, 350);     //moves back to previous position
-            driveBackwardE(0.6, distance);//drives back to set position for rest of program
+            moveRghtE(0.8, 400);     //moves back to previous position
+            driveBackwardE(0.9, distance);//drives back to set position for rest of program
         }
     }
     public void sampling() throws InterruptedException {   //moves to each mineral, checks it, moves it if needed
@@ -180,7 +172,7 @@ public class AutonomousCrater3 extends LinearOpMode {
             samplingHowMany++;                             //increases how many times we've tried
             goldMover(1400);                       //check mineral and may move it
             if (!isGold) {                                 //checks if we've seen gold
-                driveForwardE(0.7, 600);        //goes to next mineral
+                driveForwardE(0.7, 650);        //goes to next mineral
                 goldMover(2000);                    //check mineral and may move it
                 if (!isGold) {                             //checks if we've seen gold
                     driveBackwardE(0.7, 1250);  //drives to next mineral
@@ -192,6 +184,31 @@ public class AutonomousCrater3 extends LinearOpMode {
             }
         }
         phoneS.setPosition(0.9);                           //move phone back up
+    }
+    public void alignLeft(double power, int DistanceCM) {
+        double DistFL=distanceFLS.getDistance(DistanceUnit.CM);//saves distance measurement
+        double DistBL=distanceBLS.getDistance(DistanceUnit.CM);//saves distance measurement
+        while (DistFL>DistanceCM || DistBL>DistanceCM) {           //checks if we've reached dist from wall
+            DistFL = distanceFLS.getDistance(DistanceUnit.CM); //re-saves distance measurement
+            DistBL = distanceBLS.getDistance(DistanceUnit.CM); //re-saves distance measurement
+            telemetry.addData("FLS", DistFL);
+            telemetry.addData("BLS", DistBL);
+            telemetry.update();
+            if (DistFL>DistanceCM) {                               //checks if we've reached distance
+                driveFLM.setPower(-power);                       //moves motors
+                driveFRM.setPower(+power);                       //moves motors
+            } else {
+                driveFLM.setPower(0);
+                driveFRM.setPower(0);
+            }
+            if (DistBL>DistanceCM) {                               //checks if we've reached distance
+                driveBLM.setPower(+power);                       //moves motors
+                driveBRM.setPower(-power);                       //moves motors
+            } else {
+                driveBLM.setPower(0);
+                driveBRM.setPower(0);
+            }
+        }
     }
     public void driveForwardE(double power, int ticks) throws InterruptedException {
         driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -254,3 +271,6 @@ public class AutonomousCrater3 extends LinearOpMode {
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
+//Life Before Death
+//Strength Before Weakness
+//Journey Before Destination
