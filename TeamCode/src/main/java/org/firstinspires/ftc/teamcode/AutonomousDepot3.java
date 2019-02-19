@@ -111,7 +111,7 @@ public class AutonomousDepot3 extends LinearOpMode {
             delatch();                         //drop down from latch
             collectorUpDownLeftS.setPosition(0.5);
             collectorUpDownRghtS.setPosition(0.5);
-            moveLeftE(0.9, 100);    //out of latch
+            moveLeftE(0.9, 100, false);    //out of latch
             driveForwardE(0.9, 650);//away from lander
             phoneS.setPosition(0.4);           //moves phone to see
             spinRghtE(0.9, 900);    //spin so phone toward minerals
@@ -129,7 +129,7 @@ public class AutonomousDepot3 extends LinearOpMode {
 
                 //moves mineral and gets in position for marker dropping
                 phoneS.setPosition(0.9);        //bring phone up
-                moveLeftE(0.9, 2000);//move mineral into depot
+                moveLeftE(0.9, 2000, true);//move mineral into depot
                 moveRghtE(0.9, 500); //move away from depot
                 spinRghtE(0.9, 1600);//spin so marker faces depot
 
@@ -141,7 +141,7 @@ public class AutonomousDepot3 extends LinearOpMode {
                 //moves away from depot and to crater
                 moveRghtE(0.9, 100);     //move toward depot so we can go to crater w/o hitting left mineral
                 driveForwardE(0.9, 500); //move forward towards crater (still diagonal)
-                spinLeftE(0.9, 325);     //spin to align with wall, facing crater
+                spinLeftE(0.9, 350);     //spin to align with wall, facing crater
                 moveRghtE(0.9, 250);     //move toward wall
                 collectorUpDownLeftS.setPosition(1);//moves down left side
                 collectorUpDownRghtS.setPosition(0);//moves down right side
@@ -153,7 +153,7 @@ public class AutonomousDepot3 extends LinearOpMode {
                 //moves mineral
                 phoneS.setPosition(0.2);       //move phone down
                 Thread.sleep(100);        //wait for phone to move
-                moveLeftE(0.8, 700);//move mineral
+                moveLeftE(0.8, 700, false);//move mineral
                 phoneS.setPosition(0.9);       //move phone back up
                 moveRghtE(0.8, 550);//move back to previous position
 
@@ -241,6 +241,7 @@ public class AutonomousDepot3 extends LinearOpMode {
                     goldMover();                           //check mineral and may move it
                     if (!isGold) {                         //checks if we've seen gold
                         driveForwardE(0.6, 650);//goes to next mineral
+                        robotWhere=1;
                     }
                 }
             }
@@ -342,12 +343,34 @@ public class AutonomousDepot3 extends LinearOpMode {
         driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void moveLeftE(double power, int ticks) throws InterruptedException {
+    public void moveLeftE(double power, int ticks, boolean useDist) throws InterruptedException {
         driveFLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveFRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBLM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);driveBRM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveFLM.setTargetPosition(-ticks);driveFRM.setTargetPosition(ticks);driveBLM.setTargetPosition(ticks);driveBRM.setTargetPosition(-ticks);
         driveFLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveFRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);driveBRM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveFLM.setPower(power);driveFRM.setPower(power);driveBLM.setPower(power);driveBRM.setPower(power);
-        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {}
+        while (driveFLM.isBusy() && driveFRM.isBusy() && driveBLM.isBusy() && driveBRM.isBusy()) {
+            if (useDist) {
+                double DistF = distanceFS.getDistance(DistanceUnit.CM);
+                double isTooLong = 0;
+                if (DistF < 30&&isTooLong<3000) {
+                    driveFLM.setPower(0);
+                    driveFRM.setPower(0);
+                    driveBLM.setPower(0);
+                    driveBRM.setPower(0);
+                    driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    Thread.sleep(1);
+                    isTooLong++;
+                } else {
+                    driveFLM.setPower(power);
+                    driveFRM.setPower(power);
+                    driveBLM.setPower(power);
+                    driveBRM.setPower(power);
+                }
+            }
+        }
         driveFLM.setPower(0);driveFRM.setPower(0);driveBLM.setPower(0);driveBRM.setPower(0);
         driveFLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveFRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBLM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);driveBRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         driveFLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveFRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBLM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);driveBRM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

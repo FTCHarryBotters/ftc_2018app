@@ -12,8 +12,12 @@ public class TeleOpOfficial2 extends LinearOpMode {
     //for autom
     boolean sendDropperUp = false;
     boolean bringDropperDown = false;
+    boolean moveLatchUp = false;
+    boolean moveLatchDown = false;
     int UpTicks = 0;
     int DownTicks = 0;
+    int latchUpTicks = 0;
+    int latchDownTicks = 0;
 
     //declare motors
     private DcMotor driveFLM;
@@ -96,7 +100,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 if (gamepad1.y) {
                     drivespeed=0.58;
                 }else {
-                    if (gamepad1.right_trigger>0.1&&gamepad1.left_trigger>0.1) {
+                    if (gamepad1.dpad_left) {
                         drivespeed=1;
                     }
                 }
@@ -111,10 +115,10 @@ public class TeleOpOfficial2 extends LinearOpMode {
             driveBRM.setPower((-gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x)*drivespeed);
 
             //lets KV use the triggers(2) to move the Latch
-            if (gamepad1.dpad_up) {
+            if (gamepad1.right_trigger>0.1) {
                 latchM.setPower(1);
             }else {
-                if (gamepad1.dpad_down) {
+                if (gamepad1.left_trigger>0.1) {
                     latchM.setPower(-1);
                 }else {
                     latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -233,7 +237,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
                     bringDropperDown = false;
                 }
             }
-            if (gamepad2.dpad_left||gamepad1.dpad_left) {
+            if (gamepad2.dpad_left) {
                 upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 upDownM.setPower(0);
                 upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -241,7 +245,43 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 bringDropperDown=false;
                 upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 upDownM.setPower(0);
-                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);            }
+                upDownM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+
+            if (gamepad1.dpad_up) {
+                moveLatchUp = true;
+                latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                latchUpTicks=latchM.getCurrentPosition();
+                latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            if (moveLatchUp) {
+                latchUpTicks=latchM.getCurrentPosition();
+                if (latchUpTicks<3333) {
+                    latchM.setPower(1);
+                }else {
+                    latchM.setPower(0);
+                    latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    moveLatchUp = false;
+                }
+            }
+
+            if (gamepad1.dpad_down) {
+                moveLatchDown = true;
+                latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                latchDownTicks=latchM.getCurrentPosition();
+                latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            if (moveLatchDown) {
+                latchDownTicks=latchM.getCurrentPosition();
+                if (latchDownTicks<3333) {
+                    latchM.setPower(-1);
+                }else {
+                    latchM.setPower(0);
+                    latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    moveLatchDown = false;
+                }
+            }
             idle();
         }
     }
