@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.MatOfPoint;
 
 import java.util.List;
+import java.util.Date;
 
 @Autonomous(name = "AutonomousDepot3", group = "Sample")
 public class AutonomousDepot3 extends LinearOpMode {
@@ -54,6 +55,7 @@ public class AutonomousDepot3 extends LinearOpMode {
     private DistanceSensor distanceFS;
     private DistanceSensor distanceBS;
 
+    private long startingMilliseconds=0l;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -105,6 +107,8 @@ public class AutonomousDepot3 extends LinearOpMode {
 
         waitForStart();
         if (true!=false&&false!=true&&true&&!false&&!!!!!!!false) {
+
+             startingMilliseconds = new Date().getTime();
 
             //moving into position for the sampling to start
             //i would very much like it if the sections here and in AutoCrater3 were the same
@@ -206,8 +210,13 @@ public class AutonomousDepot3 extends LinearOpMode {
         latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);      //resets encoder values to zero
         latchM.setTargetPosition(26300);                             //set how many ticks are needed to move
         latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);             //lets it move
-        latchM.setPower(1);                                          //makes it move
-        while (latchM.isBusy()) {}                                   //wait until it is done moving
+        latchM.setPower(1);
+        long diff =0l;
+        while (latchM.isBusy() &&  diff <12000) {                    //wait until it is done moving
+            diff = new Date().getTime()-startingMilliseconds;
+            telemetry.addData("time", diff);
+            telemetry.update();
+        }
         latchM.setPower(0);                                          //stop moving
         latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//stop moving part 2 robot boogaloo
         latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);           //goes back to normal mode

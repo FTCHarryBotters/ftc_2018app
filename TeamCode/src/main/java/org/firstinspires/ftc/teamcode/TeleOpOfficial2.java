@@ -139,12 +139,12 @@ public class TeleOpOfficial2 extends LinearOpMode {
                     inOutLeftM.setPower(-1);
                     inOutRghtM.setPower(-1);
                 }else {
-                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     inOutLeftM.setPower(0);
                     inOutRghtM.setPower(0);
-                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    inOutLeftM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    inOutRghtM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
 
@@ -200,7 +200,6 @@ public class TeleOpOfficial2 extends LinearOpMode {
                 UpTicks=upDownM.getCurrentPosition();
                 upDownM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-
             if (sendDropperUp) {
                 UpTicks=upDownM.getCurrentPosition();
                 if (UpTicks<2100) {
@@ -215,13 +214,6 @@ public class TeleOpOfficial2 extends LinearOpMode {
             //Miike uses the up button to drop the minerals and then bring the vertikal slide bak down
             //same as other thing
             if (gamepad2.dpad_down) {
-                mineralDropperS.setPosition(0);
-                Thread.sleep(500);
-                mineralDropperS.setPosition(0.5);
-                Thread.sleep(750);
-                mineralDropperS.setPosition(1);
-                Thread.sleep(500);
-                mineralDropperS.setPosition(0.5);
                 bringDropperDown = true;
                 upDownM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 DownTicks=upDownM.getCurrentPosition();
@@ -257,7 +249,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
             }
             if (moveLatchUp) {
                 latchUpTicks=latchM.getCurrentPosition();
-                if (latchUpTicks<3333) {
+                if (Math.abs(latchUpTicks)<3333) {
                     latchM.setPower(1);
                 }else {
                     latchM.setPower(0);
@@ -274,7 +266,7 @@ public class TeleOpOfficial2 extends LinearOpMode {
             }
             if (moveLatchDown) {
                 latchDownTicks=latchM.getCurrentPosition();
-                if (latchDownTicks<3333) {
+                if (Math.abs(latchDownTicks)<3333) {
                     latchM.setPower(-1);
                 }else {
                     latchM.setPower(0);

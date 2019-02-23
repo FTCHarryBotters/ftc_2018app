@@ -14,6 +14,7 @@ import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.opencv.core.MatOfPoint;
 
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.Math.abs;
@@ -50,6 +51,9 @@ public class AutonomousCrater3 extends LinearOpMode {
     private DistanceSensor distanceBLS;
     private DistanceSensor distanceFS;
     private DistanceSensor distanceBS;
+
+    private long startingMilliseconds=0l;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -102,6 +106,8 @@ public class AutonomousCrater3 extends LinearOpMode {
         waitForStart();
         if (!!!!!!!!!!!!!!!!true) {
 
+            startingMilliseconds = new Date().getTime();
+
             //move from latch to center mineral
             delatch();                         //drop from latch
             collectorUpDownLeftS.setPosition(0.5);
@@ -142,8 +148,13 @@ public class AutonomousCrater3 extends LinearOpMode {
         latchM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);      //resets encoder values to zero
         latchM.setTargetPosition(26300);                             //set how many ticks are needed to move
         latchM.setMode(DcMotor.RunMode.RUN_TO_POSITION);             //lets it move
-        latchM.setPower(1);                                          //makes it move
-        while (latchM.isBusy()) {}                                   //wait until it is done moving
+        latchM.setPower(1);
+        long diff =0l;
+        while (latchM.isBusy() &&  diff <12000) {                    //wait until it is done moving
+            diff = new Date().getTime()-startingMilliseconds;
+            telemetry.addData("time", diff);
+            telemetry.update();
+        }
         latchM.setPower(0);                                          //stop moving
         latchM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//stop moving part 2 robot boogaloo
         latchM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);           //goes back to normal mode
