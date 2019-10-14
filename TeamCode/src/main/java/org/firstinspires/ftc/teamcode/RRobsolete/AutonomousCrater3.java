@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RRobsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -16,6 +17,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 @Autonomous(name = "AutonomousCrater3", group = "Sample")
+@Disabled
 public class AutonomousCrater3 extends LinearOpMode {
 
     //used for vision program and sampling

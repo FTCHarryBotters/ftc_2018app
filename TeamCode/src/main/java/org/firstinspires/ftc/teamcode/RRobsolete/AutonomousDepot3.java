@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RRobsolete;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Date;
 
 @Autonomous(name = "AutonomousDepot3", group = "Sample")
+@Disabled
 public class AutonomousDepot3 extends LinearOpMode {
 
     //used for vision system and sampling
